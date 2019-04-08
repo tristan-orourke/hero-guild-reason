@@ -36,6 +36,13 @@ type party = {
 type questAction =
   | GainGold(int);
 
+type location =
+  | Forest
+  | Ruin;
+type questType =
+  | ClearMonsters
+  | Guard;
+
 type encounter = {
   description: string,
   scoutChallenge: float,
@@ -48,22 +55,28 @@ and encounterResult = {
   description: string,
   questActions: list(questAction),
   heroActions: list(heroAction),
-  thisEncounter: encounter,
   nextEncounter: option(encounter),
 };
 
 type quest = {
   description: string,
   challenge: float,
+  location,
+  questType,
+};
+
+type questHistoryItem = {
+  encounter,
+  encounterResult,
 };
 
 type questHistory = {
   party,
   quest,
-  history: list(encounterResult),
+  history: list(questHistoryItem),
 };
 
-let rec dummyEncounter = (): encounter => {
+let dummyEncounter = (): encounter => {
   description: "Dummy Encounter,",
   scoutChallenge: 0.0,
   leaderChallenge: 0.0,
@@ -73,17 +86,20 @@ let rec dummyEncounter = (): encounter => {
     description: "Dummy Result",
     questActions: [],
     heroActions: [],
-    thisEncounter: dummyEncounter(),
     nextEncounter: None,
   },
 };
 
 let rec resolveQuestEncounters =
-        (party: party, encounter: encounter): list(encounterResult) => {
-  let result = encounter.resolve(party);
-  switch (result.nextEncounter) {
-  | None => [result]
-  | Some(encounter) => [result, ...resolveQuestEncounters(party, encounter)]
+        (party: party, encounter: encounter): list(questHistoryItem) => {
+  let encounterResult = encounter.resolve(party);
+  let questHistoryItem = {encounter, encounterResult};
+  switch (encounterResult.nextEncounter) {
+  | None => [questHistoryItem]
+  | Some(encounter) => [
+      questHistoryItem,
+      ...resolveQuestEncounters(party, encounter),
+    ]
   };
 };
 
@@ -91,4 +107,13 @@ let resolveQuest = (party, quest): questHistory => {
   //Create initial encounter
   let encounter = dummyEncounter();
   {party, quest, history: resolveQuestEncounters(party, encounter)};
+};
+
+let generateQuestEncounter = (rand: rand, quest): encounter => {
+  switch(quest.questType, quest.location) {
+    | (ClearMonsters, Forest) => ;
+    | (ClearMonsters, Ruin) => ;
+    | (Guard, Forest) => ;
+    | (Guard, Ruin) => ;
+  }
 };
