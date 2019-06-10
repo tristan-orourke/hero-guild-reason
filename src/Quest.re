@@ -1,36 +1,8 @@
-type bond =
-  | Basic
-  | Friend
-  | Rival
-  | Mentor
-  | Student;
-
-/**
-  Note: if I am myId, bond=Mentor means I think of THEM as my Mentor.
- */
-type relationship = {
-  myId: int,
-  towardsId: int,
-  value: float,
-  bond,
-};
-
-type hero = {
-  id: int,
-  name: string,
-  skill: float,
-  relationships: list(relationship),
-};
-
-type heroAction =
-  | SetSkill(float)
-  | SetRelationship(relationship);
-
 type party = {
-  scout: hero,
-  leader: hero,
-  frontline: hero,
-  support: hero,
+  scout: Hero.hero,
+  leader: Hero.hero,
+  frontline: Hero.hero,
+  support: Hero.hero,
 };
 
 type questAction =
@@ -49,13 +21,11 @@ type encounter = {
   leaderChallenge: float,
   frontlineChallenge: float,
   supportChallenge: float,
-  resolve: party => encounterResult,
 }
 and encounterResult = {
   description: string,
   questActions: list(questAction),
-  heroActions: list(heroAction),
-  nextEncounter: option(encounter),
+  heroActions: list(Hero.heroAction),
 };
 
 type quest = {
@@ -82,38 +52,36 @@ let dummyEncounter = (): encounter => {
   leaderChallenge: 0.0,
   frontlineChallenge: 0.0,
   supportChallenge: 0.0,
-  resolve: _party => {
-    description: "Dummy Result",
-    questActions: [],
-    heroActions: [],
-    nextEncounter: None,
-  },
 };
-
-let rec resolveQuestEncounters =
-        (party: party, encounter: encounter): list(questHistoryItem) => {
-  let encounterResult = encounter.resolve(party);
-  let questHistoryItem = {encounter, encounterResult};
-  switch (encounterResult.nextEncounter) {
-  | None => [questHistoryItem]
-  | Some(encounter) => [
-      questHistoryItem,
-      ...resolveQuestEncounters(party, encounter),
-    ]
+let generateNextEncounter =
+    (seed: SeededRandom.rand, questHistory: questHistory): option(encounter) =>
+  if (List.length(questHistory.history) > 5) {
+    None;
+  } else {
+    Some(dummyEncounter());
   };
-};
+
+let resolveEncounter (party: party, encounter: encounter): encounterResult => 
+  {description: "Dummy Result", questActions: [], heroActions: []};
 
 let resolveQuest = (party, quest): questHistory => {
-  //Create initial encounter
-  let encounter = dummyEncounter();
-  {party, quest, history: resolveQuestEncounters(party, encounter)};
+  let history = [];
+  let questHistory = {party, quest, history: []};
+  let rand = SeededRandom.seedRand(1); //TODO: get rand from quest or encounter
+  let encounterHistory: list(questHistoryItem) = [];
+  let nextEncounter = generateNextEncounter(rand, questHistory);
+  while (nextEncounter !== None) {
+    let resolution = resolveEncounter(party, nextEncounter);
+    let encounterHistory = [{encounter: nextEncounter, encounterResult: resolution}, ...encounterHistory];
+  }
+  return {party, quest, history: encounterHistory};
 };
 
-let generateQuestEncounter = (rand: rand, quest): encounter => {
-  switch(quest.questType, quest.location) {
-    | (ClearMonsters, Forest) => ;
-    | (ClearMonsters, Ruin) => ;
-    | (Guard, Forest) => ;
-    | (Guard, Ruin) => ;
-  }
-};
+// let generateQuestEncounter = (rand: rand, quest): encounter => {
+//   switch(quest.questType, quest.location) {
+//     | (ClearMonsters, Forest) => ;
+//     | (ClearMonsters, Ruin) => ;
+//     | (Guard, Forest) => ;
+//     | (Guard, Ruin) => ;
+//   }
+// };

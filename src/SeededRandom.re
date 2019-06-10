@@ -36,3 +36,14 @@ let rec seedRand = (seed: int): rand => {
     },
   };
 };
+
+let rec randomSeriesRec(rand: rand, len: int, series: list(rand)): list(rand) => 
+  len <= 0 ?
+    series
+    : 
+      randomSeriesRec(rand.seed(), length - 1, [rand.seed(), ...series]);
+     
+  
+
+
+let generateSeries(rand: rand, length: int): list(rand) => randomSeriesRec(rand, length, []);
