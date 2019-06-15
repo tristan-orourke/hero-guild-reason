@@ -22,9 +22,12 @@ let make = () => {
       {heroes: []},
     );
 
-  let submitHero = (hero: Hero.hero) => heroDispatch(AddHero(hero));
+  let submitHero = (hero: Hero.hero) => {
+    heroDispatch(AddHero(hero));
+    Js.log(heroState);
+  };
   <div>
     <p> {React.string("This is a most basic component.")} </p>
-    <HeroForm submitHero />
+    <div className=Styles.card> <HeroForm submitHero /> </div>
   </div>;
 };

@@ -3,6 +3,7 @@
 
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
+var Styles$HeroGuild = require("../Styles.bs.js");
 var HeroForm$HeroGuild = require("./HeroForm.bs.js");
 
 function App(Props) {
@@ -13,12 +14,17 @@ function App(Props) {
                   ]];
         }), /* record */[/* heroes : [] */0]);
   var heroDispatch = match[1];
+  var heroState = match[0];
   var submitHero = function (hero) {
-    return Curry._1(heroDispatch, /* AddHero */[hero]);
+    Curry._1(heroDispatch, /* AddHero */[hero]);
+    console.log(heroState);
+    return /* () */0;
   };
-  return React.createElement("div", undefined, React.createElement("p", undefined, "This is a most basic component."), React.createElement(HeroForm$HeroGuild.make, {
-                  submitHero: submitHero
-                }));
+  return React.createElement("div", undefined, React.createElement("p", undefined, "This is a most basic component."), React.createElement("div", {
+                  className: Styles$HeroGuild.card
+                }, React.createElement(HeroForm$HeroGuild.make, {
+                      submitHero: submitHero
+                    })));
 }
 
 var make = App;

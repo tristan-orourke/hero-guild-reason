@@ -14,7 +14,7 @@ let make = (~submitHero: submitHero) => {
     submitHero(hero);
   };
 
-  <div>
+  <div className=Styles.form>
     <p> {React.string("Create a hero by entering values below.")} </p>
     <label>
       {React.string("Hero Name")}

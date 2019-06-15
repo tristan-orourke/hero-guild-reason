@@ -6,6 +6,7 @@ var React = require("react");
 var Pervasives = require("bs-platform/lib/js/pervasives.js");
 var Caml_format = require("bs-platform/lib/js/caml_format.js");
 var Uuid$HeroGuild = require("../Uuid.bs.js");
+var Styles$HeroGuild = require("../Styles.bs.js");
 
 function HeroForm(Props) {
   var submitHero = Props.submitHero;
@@ -19,7 +20,9 @@ function HeroForm(Props) {
         }));
   var setSkill = match$1[1];
   var skill = match$1[0];
-  return React.createElement("div", undefined, React.createElement("p", undefined, "Create a hero by entering values below."), React.createElement("label", undefined, "Hero Name", React.createElement("input", {
+  return React.createElement("div", {
+              className: Styles$HeroGuild.form
+            }, React.createElement("p", undefined, "Create a hero by entering values below."), React.createElement("label", undefined, "Hero Name", React.createElement("input", {
                       type: "text",
                       value: name,
                       onChange: (function ($$event) {
