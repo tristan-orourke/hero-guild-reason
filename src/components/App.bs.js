@@ -3,6 +3,7 @@
 
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
+var Hero$HeroGuild = require("../Hero.bs.js");
 var Styles$HeroGuild = require("../Styles.bs.js");
 var HeroForm$HeroGuild = require("./HeroForm.bs.js");
 
@@ -14,10 +15,9 @@ function App(Props) {
                   ]];
         }), /* record */[/* heroes : [] */0]);
   var heroDispatch = match[1];
-  var heroState = match[0];
   var submitHero = function (hero) {
     Curry._1(heroDispatch, /* AddHero */[hero]);
-    console.log(heroState);
+    console.log(Hero$HeroGuild.heroToJs(hero));
     return /* () */0;
   };
   return React.createElement("div", undefined, React.createElement("p", undefined, "This is a most basic component."), React.createElement("div", {

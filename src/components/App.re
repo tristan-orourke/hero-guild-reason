@@ -24,7 +24,7 @@ let make = () => {
 
   let submitHero = (hero: Hero.hero) => {
     heroDispatch(AddHero(hero));
-    Js.log(heroState);
+    Js.log(Hero.heroToJs(hero));
   };
   <div>
     <p> {React.string("This is a most basic component.")} </p>
