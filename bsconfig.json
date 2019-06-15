@@ -1,21 +1,22 @@
-
 {
-  "name": "react-template",
-  "reason": {
-    "react-jsx": 2
-  },
-  "sources": {
-    "dir" : "src",
-    "subdirs" : true
-  },
-  "package-specs": [{
-    "module": "commonjs",
-    "in-source": true
-  }],
+  "name": "hero-guild",
+  "reason": { "react-jsx": 3 },
+  "bsc-flags": ["-bs-super-errors"],
+  "sources": [
+    {
+      "dir": "src",
+      "subdirs": true
+    }
+  ],
+  "package-specs": [
+    {
+      "module": "commonjs",
+      "in-source": true
+    }
+  ],
   "suffix": ".bs.js",
   "namespace": true,
-  "bs-dependencies": [
-    "reason-react"
-  ],
+  "bs-dependencies": ["reason-react"],
+  "ppx-flags": [],
   "refmt": 3
 }
