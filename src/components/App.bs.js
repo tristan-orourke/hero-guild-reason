@@ -3,27 +3,20 @@
 
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
-var Hero$HeroGuild = require("../Hero.bs.js");
 var Styles$HeroGuild = require("../Styles.bs.js");
+var AppState$HeroGuild = require("../AppState.bs.js");
 var HeroForm$HeroGuild = require("./HeroForm.bs.js");
 var GuildInfo$HeroGuild = require("./GuildInfo.bs.js");
 
 function App(Props) {
-  var match = React.useReducer((function (state, action) {
-          return /* record */[/* heroes : :: */[
-                    action[0],
-                    state[/* heroes */0]
-                  ]];
-        }), /* record */[/* heroes : [] */0]);
+  var match = React.useReducer(AppState$HeroGuild.HeroState[/* heroReducer */1], AppState$HeroGuild.HeroState[/* initHero */0](/* () */0));
   var heroDispatch = match[1];
   var submitHero = function (hero) {
-    Curry._1(heroDispatch, /* AddHero */[hero]);
-    console.log(Hero$HeroGuild.heroToJs(hero));
-    return /* () */0;
+    return Curry._1(heroDispatch, /* AddHero */[hero]);
   };
   return React.createElement("div", {
               className: Styles$HeroGuild.flexColumn
-            }, React.createElement("p", undefined, "This is a most basic component."), React.createElement("div", undefined, React.createElement(HeroForm$HeroGuild.make, {
+            }, React.createElement("h2", undefined, "Heroes Guild"), React.createElement("div", undefined, React.createElement(HeroForm$HeroGuild.make, {
                       submitHero: submitHero
                     })), React.createElement(GuildInfo$HeroGuild.make, {
                   heroes: match[0][/* heroes */0]
