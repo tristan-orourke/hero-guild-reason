@@ -1,7 +1,7 @@
 type party = {
   scout: Hero.hero,
   leader: Hero.hero,
-  frontline: Hero.hero,
+  defence: Hero.hero,
   support: Hero.hero,
 };
 
@@ -19,7 +19,7 @@ type encounter = {
   description: string,
   scoutChallenge: float,
   leaderChallenge: float,
-  frontlineChallenge: float,
+  defenceChallenge: float,
   supportChallenge: float,
 }
 and encounterResult = {
@@ -50,7 +50,7 @@ let dummyEncounter = (): encounter => {
   description: "Dummy Encounter,",
   scoutChallenge: 0.0,
   leaderChallenge: 0.0,
-  frontlineChallenge: 0.0,
+  defenceChallenge: 0.0,
   supportChallenge: 0.0,
 };
 let generateNextEncounter = (questHistory: questHistory): option(encounter) =>

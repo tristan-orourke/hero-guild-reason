@@ -8,7 +8,7 @@ function dummyEncounter(param) {
           /* description */"Dummy Encounter,",
           /* scoutChallenge */0.0,
           /* leaderChallenge */0.0,
-          /* frontlineChallenge */0.0,
+          /* defenceChallenge */0.0,
           /* supportChallenge */0.0
         ];
 }
@@ -21,7 +21,7 @@ function generateNextEncounter(questHistory) {
             /* description */"Dummy Encounter,",
             /* scoutChallenge */0.0,
             /* leaderChallenge */0.0,
-            /* frontlineChallenge */0.0,
+            /* defenceChallenge */0.0,
             /* supportChallenge */0.0
           ];
   }
