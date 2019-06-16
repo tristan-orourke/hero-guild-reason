@@ -8,6 +8,7 @@ type bond =
 /**
   Note: if I am myId, bond=Mentor means I think of THEM as my Mentor.
  */
+[@bs.deriving jsConverter]
 type relationship = {
   myId: string,
   towardsId: int,
@@ -25,3 +26,10 @@ type hero = {
 type heroAction =
   | SetSkill(float)
   | SetRelationship(relationship);
+
+let heroToJs = hero => {
+  "id": hero.id,
+  "name": hero.name,
+  "skill": hero.skill,
+  "relationships": List.map(relationshipToJs, hero.relationships),
+};
