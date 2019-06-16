@@ -26,8 +26,9 @@ let make = () => {
     heroDispatch(AddHero(hero));
     Js.log(Hero.heroToJs(hero));
   };
-  <div>
+  <div className=Styles.flexColumn>
     <p> {React.string("This is a most basic component.")} </p>
-    <div className=Styles.card> <HeroForm submitHero /> </div>
+    <div> <HeroForm submitHero /> </div>
+    <GuildInfo heroes={heroState.heroes} />
   </div>;
 };

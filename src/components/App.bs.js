@@ -6,6 +6,7 @@ var React = require("react");
 var Hero$HeroGuild = require("../Hero.bs.js");
 var Styles$HeroGuild = require("../Styles.bs.js");
 var HeroForm$HeroGuild = require("./HeroForm.bs.js");
+var GuildInfo$HeroGuild = require("./GuildInfo.bs.js");
 
 function App(Props) {
   var match = React.useReducer((function (state, action) {
@@ -20,11 +21,13 @@ function App(Props) {
     console.log(Hero$HeroGuild.heroToJs(hero));
     return /* () */0;
   };
-  return React.createElement("div", undefined, React.createElement("p", undefined, "This is a most basic component."), React.createElement("div", {
-                  className: Styles$HeroGuild.card
-                }, React.createElement(HeroForm$HeroGuild.make, {
+  return React.createElement("div", {
+              className: Styles$HeroGuild.flexColumn
+            }, React.createElement("p", undefined, "This is a most basic component."), React.createElement("div", undefined, React.createElement(HeroForm$HeroGuild.make, {
                       submitHero: submitHero
-                    })));
+                    })), React.createElement(GuildInfo$HeroGuild.make, {
+                  heroes: match[0][/* heroes */0]
+                }));
 }
 
 var make = App;

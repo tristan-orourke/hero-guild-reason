@@ -3,17 +3,11 @@
 
 var Css = require("bs-css/src/Css.js");
 
-var card = Css.style(/* :: */[
+var flexColumn = Css.style(/* :: */[
       Css.display(Css.flexBox),
       /* :: */[
         Css.flexDirection(Css.column),
-        /* :: */[
-          Css.alignItems(Css.stretch),
-          /* :: */[
-            Css.backgroundColor(Css.blue),
-            /* [] */0
-          ]
-        ]
+        /* [] */0
       ]
     ]);
 
@@ -33,6 +27,6 @@ Css.$$global("input", /* :: */[
       /* [] */0
     ]);
 
-exports.card = card;
+exports.flexColumn = flexColumn;
 exports.form = form;
-/* card Not a pure module */
+/* flexColumn Not a pure module */
