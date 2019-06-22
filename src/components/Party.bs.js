@@ -6,13 +6,17 @@ var $$Array = require("bs-platform/lib/js/array.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
+var Styles$HeroGuild = require("../Styles.bs.js");
 
 function Party$HeroSelector(Props) {
   var position = Props.position;
   var selectedHero = Props.selectedHero;
   var heroOptions = Props.heroOptions;
   var handleChange = Props.handleChange;
-  return React.createElement("label", undefined, position + ": ", React.createElement("select", {
+  return React.createElement("label", {
+              className: Styles$HeroGuild.formLabel
+            }, position + ": ", React.createElement("select", {
+                  className: Styles$HeroGuild.input,
                   name: position,
                   value: selectedHero !== undefined ? selectedHero[/* id */0] : "",
                   onChange: handleChange
@@ -101,7 +105,9 @@ function Party(Props) {
     }
     return List.filter(heroFilter)(heroes);
   };
-  return React.createElement("div", undefined, React.createElement("h3", undefined, "Select your pary"), React.createElement(Party$HeroSelector, {
+  return React.createElement("div", {
+              className: "p-2"
+            }, React.createElement("h3", undefined, "Select your pary"), React.createElement(Party$HeroSelector, {
                   position: "scout",
                   selectedHero: scout,
                   heroOptions: availableOptions(scout),
@@ -130,6 +136,7 @@ function Party(Props) {
                       return handleChange(setSupport, param);
                     })
                 }), React.createElement("button", {
+                  className: Styles$HeroGuild.btnBlue,
                   type: "submit",
                   onClick: (function (param) {
                       if (scout !== undefined && leader !== undefined && defence !== undefined && support !== undefined) {

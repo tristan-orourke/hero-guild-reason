@@ -3,9 +3,9 @@
 
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
-var Pervasives = require("bs-platform/lib/js/pervasives.js");
 var Caml_format = require("bs-platform/lib/js/caml_format.js");
 var Uuid$HeroGuild = require("../Uuid.bs.js");
+var Forms$HeroGuild = require("./Forms.bs.js");
 var Styles$HeroGuild = require("../Styles.bs.js");
 
 function HeroForm(Props) {
@@ -21,32 +21,33 @@ function HeroForm(Props) {
   var setSkill = match$1[1];
   var skill = match$1[0];
   return React.createElement("div", {
-              className: Styles$HeroGuild.form
-            }, React.createElement("p", undefined, "Create a hero by entering values below."), React.createElement("label", undefined, "Hero Name", React.createElement("input", {
-                      type: "text",
-                      value: name,
-                      onChange: (function ($$event) {
-                          var value = $$event.target.value;
-                          return Curry._1(setName, (function (param) {
-                                        return value;
-                                      }));
-                        })
-                    })), React.createElement("label", undefined, "Skill (0-1)", React.createElement("input", {
-                      step: 0.01,
-                      type: "number",
-                      value: Pervasives.string_of_float(skill),
-                      onChange: (function ($$event) {
-                          var value = $$event.target.value;
-                          if (isNaN(Number(value))) {
-                            return 0;
-                          } else {
-                            var f = Caml_format.caml_float_of_string(value);
-                            return Curry._1(setSkill, (function (param) {
-                                          return f;
-                                        }));
-                          }
-                        })
-                    })), React.createElement("button", {
+              className: "max-w-md p-2"
+            }, React.createElement("p", undefined, "Create a hero by entering values below."), React.createElement(Forms$HeroGuild.TextInput[/* make */0], {
+                  label: "Hero Name",
+                  value: name,
+                  onChange: (function ($$event) {
+                      var value = $$event.target.value;
+                      return Curry._1(setName, (function (param) {
+                                    return value;
+                                  }));
+                    })
+                }), React.createElement(Forms$HeroGuild.NumberInput[/* make */0], {
+                  label: "Skill (0-1)",
+                  value: skill,
+                  step: 0.01,
+                  onChange: (function ($$event) {
+                      var value = $$event.target.value;
+                      if (isNaN(Number(value))) {
+                        return 0;
+                      } else {
+                        var f = Caml_format.caml_float_of_string(value);
+                        return Curry._1(setSkill, (function (param) {
+                                      return f;
+                                    }));
+                      }
+                    })
+                }), React.createElement("button", {
+                  className: Styles$HeroGuild.btnBlue,
                   type: "submit",
                   onClick: (function (param) {
                       return Curry._1(submitHero, /* record */[

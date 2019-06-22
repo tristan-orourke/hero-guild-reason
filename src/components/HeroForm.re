@@ -14,35 +14,29 @@ let make = (~submitHero: submitHero) => {
     submitHero(hero);
   };
 
-  <div className=Styles.form>
+  <div className="max-w-md p-2">
     <p> {React.string("Create a hero by entering values below.")} </p>
-    <label>
-      {React.string("Hero Name")}
-      <input
-        type_="text"
-        value=name
-        onChange={event => {
-          let value = getValue(event);
-          setName(_ => value);
-        }}
-      />
-    </label>
-    <label>
-      {React.string("Skill (0-1)")}
-      <input
-        type_="number"
-        step=0.01
-        value={string_of_float(skill)}
-        onChange={event => {
-          let value = getValue(event);
-          if (isFloat(value)) {
-            let f = float_of_string(value);
-            setSkill(_ => f);
-          };
-        }}
-      />
-    </label>
-    <button type_="submit" onClick={_ => submit()}>
+    <Forms.TextInput
+      label="Hero Name"
+      value=name
+      onChange={event => {
+        let value = getValue(event);
+        setName(_ => value);
+      }}
+    />
+    <Forms.NumberInput
+      label="Skill (0-1)"
+      step=0.01
+      value=skill
+      onChange={event => {
+        let value = getValue(event);
+        if (isFloat(value)) {
+          let f = float_of_string(value);
+          setSkill(_ => f);
+        };
+      }}
+    />
+    <button className=Styles.btnBlue type_="submit" onClick={_ => submit()}>
       {React.string("submit")}
     </button>
   </div>;

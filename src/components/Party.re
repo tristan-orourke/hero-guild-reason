@@ -7,9 +7,10 @@ module HeroSelector = {
         ~heroOptions: list(Hero.hero),
         ~handleChange,
       ) => {
-    <label>
+    <label className=Styles.formLabel>
       {React.string(position ++ ": ")}
       <select
+        className=Styles.input
         name=position
         value={
           switch (selectedHero) {
@@ -88,7 +89,7 @@ let make = (~heroes: list(Hero.hero), ~submitParty: Quest.party => unit) => {
       Js.log("Cannot submit party until all positions filled") // TODO: do something when more need to be selected
     };
 
-  <div>
+  <div className="p-2">
     <h3> {React.string("Select your pary")} </h3>
     <HeroSelector
       position="scout"
@@ -114,7 +115,7 @@ let make = (~heroes: list(Hero.hero), ~submitParty: Quest.party => unit) => {
       heroOptions={availableOptions(~forceAllow=support)}
       handleChange={handleChange(setSupport)}
     />
-    <button type_="submit" onClick={_ => validateAndSubmit()}>
+    <button className=Styles.btnBlue type_="submit" onClick={_ => validateAndSubmit()}>
       {React.string("Submit Party")}
     </button>
   </div>;

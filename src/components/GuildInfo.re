@@ -1,7 +1,7 @@
 module HeroCard = {
   [@react.component]
   let make = (~hero: Hero.hero) => {
-    <div>
+    <div className="max-w-xs rounded overflow-hidden shadow-lg p-2 m-2">
       <p> {React.string("Name: " ++ hero.name)} </p>
       <p> {React.string("Skill: " ++ string_of_float(hero.skill))} </p>
     </div>;
@@ -18,5 +18,5 @@ let make = (~heroes: list(Hero.hero)) => {
   //   React.array(Array.of_list(List.map(hero => <HeroCard hero />, heroes)));
   // };
 
-  <div> {React.string("Your Heroes")} <div> heroCards </div> </div>;
+  <div className="p-2"> {React.string("Your Heroes")} <div className="flex"> heroCards </div> </div>;
 };

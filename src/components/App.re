@@ -16,8 +16,10 @@ let make = () => {
   let mockSubmitHero = _ => Js.log("submitting hero");
   let submitHero = hero => heroDispatch(AppState.HeroState.AddHero(hero));
 
-  <div className=Styles.flexColumn>
-    <h2> {React.string("Heroes Guild")} </h2>
+  <div className="container object-top">
+    <div className="p-2">
+      <h2> {React.string("Heroes Guild")} </h2>
+    </div>
     <div> <HeroForm submitHero /> </div>
     <GuildInfo heroes={heroState.heroes} />
     <Party

@@ -8,7 +8,9 @@ var Pervasives = require("bs-platform/lib/js/pervasives.js");
 
 function GuildInfo$HeroCard(Props) {
   var hero = Props.hero;
-  return React.createElement("div", undefined, React.createElement("p", undefined, "Name: " + hero[/* name */1]), React.createElement("p", undefined, "Skill: " + Pervasives.string_of_float(hero[/* skill */2])));
+  return React.createElement("div", {
+              className: "max-w-xs rounded overflow-hidden shadow-lg p-2 m-2"
+            }, React.createElement("p", undefined, "Name: " + hero[/* name */1]), React.createElement("p", undefined, "Skill: " + Pervasives.string_of_float(hero[/* skill */2])));
 }
 
 var HeroCard = /* module */[/* make */GuildInfo$HeroCard];
@@ -21,7 +23,11 @@ function GuildInfo(Props) {
                           key: hero[/* id */0]
                         });
             }), heroes));
-  return React.createElement("div", undefined, "Your Heroes", React.createElement("div", undefined, heroCards));
+  return React.createElement("div", {
+              className: "p-2"
+            }, "Your Heroes", React.createElement("div", {
+                  className: "flex"
+                }, heroCards));
 }
 
 var make = GuildInfo;
