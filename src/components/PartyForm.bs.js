@@ -8,32 +8,42 @@ var React = require("react");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Styles$HeroGuild = require("../Styles.bs.js");
 
-function Party$HeroSelector(Props) {
+function PartyForm$HeroSelector(Props) {
   var position = Props.position;
   var selectedHero = Props.selectedHero;
   var heroOptions = Props.heroOptions;
   var handleChange = Props.handleChange;
-  return React.createElement("label", {
-              className: Styles$HeroGuild.formLabel
-            }, position + ": ", React.createElement("select", {
-                  className: Styles$HeroGuild.input,
-                  name: position,
-                  value: selectedHero !== undefined ? selectedHero[/* id */0] : "",
-                  onChange: handleChange
-                }, React.createElement("option", {
-                      disabled: true,
-                      value: ""
-                    }, "fill position"), $$Array.of_list(List.map((function (hero) {
-                            return React.createElement("option", {
-                                        key: hero[/* id */0],
-                                        value: hero[/* id */0]
-                                      }, hero[/* name */1]);
-                          }), heroOptions))));
+  return React.createElement("div", {
+              className: "inline-block relative m-2"
+            }, React.createElement("label", {
+                  className: Styles$HeroGuild.formLabel
+                }, position + ": ", React.createElement("select", {
+                      className: Styles$HeroGuild.input,
+                      name: position,
+                      value: selectedHero !== undefined ? selectedHero[/* id */0] : "",
+                      onChange: handleChange
+                    }, React.createElement("option", {
+                          disabled: true,
+                          value: ""
+                        }, "fill position"), $$Array.of_list(List.map((function (hero) {
+                                return React.createElement("option", {
+                                            key: hero[/* id */0],
+                                            value: hero[/* id */0]
+                                          }, hero[/* name */1]);
+                              }), heroOptions)))), React.createElement("div", {
+                  className: "pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+                }, React.createElement("svg", {
+                      className: "fill-current h-4 w-4",
+                      viewBox: "0 0 20 20",
+                      xmlns: "http://www.w3.org/2000/svg"
+                    }, React.createElement("path", {
+                          d: "M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+                        }))));
 }
 
-var HeroSelector = /* module */[/* make */Party$HeroSelector];
+var HeroSelector = /* module */[/* make */PartyForm$HeroSelector];
 
-function Party(Props) {
+function PartyForm(Props) {
   var heroes = Props.heroes;
   var submitParty = Props.submitParty;
   var match = React.useState((function () {
@@ -107,28 +117,28 @@ function Party(Props) {
   };
   return React.createElement("div", {
               className: "p-2"
-            }, React.createElement("h3", undefined, "Select your pary"), React.createElement(Party$HeroSelector, {
+            }, React.createElement("h3", undefined, "Select your pary"), React.createElement(PartyForm$HeroSelector, {
                   position: "scout",
                   selectedHero: scout,
                   heroOptions: availableOptions(scout),
                   handleChange: (function (param) {
                       return handleChange(setScout, param);
                     })
-                }), React.createElement(Party$HeroSelector, {
+                }), React.createElement(PartyForm$HeroSelector, {
                   position: "leader",
                   selectedHero: leader,
                   heroOptions: availableOptions(leader),
                   handleChange: (function (param) {
                       return handleChange(setLeader, param);
                     })
-                }), React.createElement(Party$HeroSelector, {
+                }), React.createElement(PartyForm$HeroSelector, {
                   position: "defence",
                   selectedHero: defence,
                   heroOptions: availableOptions(defence),
                   handleChange: (function (param) {
                       return handleChange(setDefence, param);
                     })
-                }), React.createElement(Party$HeroSelector, {
+                }), React.createElement(PartyForm$HeroSelector, {
                   position: "support",
                   selectedHero: support,
                   heroOptions: availableOptions(support),
@@ -154,7 +164,7 @@ function Party(Props) {
                 }, "Submit Party"));
 }
 
-var make = Party;
+var make = PartyForm;
 
 exports.HeroSelector = HeroSelector;
 exports.make = make;

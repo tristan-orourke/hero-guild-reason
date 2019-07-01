@@ -18,5 +18,8 @@ let make = (~heroes: list(Hero.hero)) => {
   //   React.array(Array.of_list(List.map(hero => <HeroCard hero />, heroes)));
   // };
 
-  <div className="p-2"> {React.string("Your Heroes")} <div className="flex"> heroCards </div> </div>;
+  <div className="p-2">
+    {React.string("Your Heroes")}
+    <div className="flex flex-col sm:flex-row"> heroCards </div>
+  </div>;
 };

@@ -13,16 +13,13 @@ let make = () => {
       // AppState.HeroState.initHero(),
       {heroes: initialHeros},
     );
-  let mockSubmitHero = _ => Js.log("submitting hero");
   let submitHero = hero => heroDispatch(AppState.HeroState.AddHero(hero));
 
-  <div className="container object-top">
-    <div className="p-2">
-      <h2> {React.string("Heroes Guild")} </h2>
-    </div>
+  <div className="container mx-auto object-top">
+    <div className="p-2"> <h2> {React.string("Heroes Guild")} </h2> </div>
     <div> <HeroForm submitHero /> </div>
     <GuildInfo heroes={heroState.heroes} />
-    <Party
+    <PartyForm
       heroes={heroState.heroes}
       submitParty={_ => Js.log("submitting party")}
     />

@@ -3,10 +3,10 @@
 
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
-var Party$HeroGuild = require("./Party.bs.js");
 var AppState$HeroGuild = require("../AppState.bs.js");
 var HeroForm$HeroGuild = require("./HeroForm.bs.js");
 var GuildInfo$HeroGuild = require("./GuildInfo.bs.js");
+var PartyForm$HeroGuild = require("./PartyForm.bs.js");
 
 function App(Props) {
   var match = React.useReducer(AppState$HeroGuild.HeroState[/* heroReducer */1], /* record */[/* heroes : :: */[
@@ -48,14 +48,14 @@ function App(Props) {
     return Curry._1(heroDispatch, /* AddHero */[hero]);
   };
   return React.createElement("div", {
-              className: "container object-top"
+              className: "container mx-auto object-top"
             }, React.createElement("div", {
                   className: "p-2"
                 }, React.createElement("h2", undefined, "Heroes Guild")), React.createElement("div", undefined, React.createElement(HeroForm$HeroGuild.make, {
                       submitHero: submitHero
                     })), React.createElement(GuildInfo$HeroGuild.make, {
                   heroes: heroState[/* heroes */0]
-                }), React.createElement(Party$HeroGuild.make, {
+                }), React.createElement(PartyForm$HeroGuild.make, {
                   heroes: heroState[/* heroes */0],
                   submitParty: (function (param) {
                       console.log("submitting party");
