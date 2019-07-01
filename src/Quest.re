@@ -29,6 +29,7 @@ and encounterResult = {
 };
 
 type quest = {
+  id: string,
   description: string,
   challenge: float,
   location,
@@ -66,7 +67,7 @@ let resolveEncounter = (party: party, encounter: encounter): encounterResult => 
   heroActions: [],
 };
 
-let resolveQuest = (party, quest): questHistory => {
+let resolveQuest = (~party, ~quest): questHistory => {
   // let rand = SeededRandom.seedRand(1); //TODO: get rand from quest or encounter
   let questComplete = ref(false);
   let encounterHistory: ref(list(questHistoryItem)) = ref([]);
@@ -89,7 +90,7 @@ let resolveQuest = (party, quest): questHistory => {
     };
   };
   {party, quest, history: encounterHistory^};
-};
+} /* }*/;
 
 // let generateQuestEncounter = (rand: rand, quest): encounter => {
 //   switch(quest.questType, quest.location) {
@@ -98,4 +99,3 @@ let resolveQuest = (party, quest): questHistory => {
 //     | (Guard, Forest) => ;
 //     | (Guard, Ruin) => ;
 //   }
-// };

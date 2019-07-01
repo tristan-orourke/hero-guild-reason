@@ -15,6 +15,13 @@ let make = () => {
     );
   let submitHero = hero => heroDispatch(AppState.HeroState.AddHero(hero));
 
+  let (questState, questDispatch) =
+    React.useReducer(
+      AppState.QuestState.questReducer,
+      AppState.QuestState.initQuest(),
+    );
+  let addQuest = quest => questDispatch(AppState.QuestState.AddQuest(quest));
+
   <div className="container mx-auto object-top">
     <div className="p-2"> <h2> {React.string("Heroes Guild")} </h2> </div>
     <div> <HeroForm submitHero /> </div>
@@ -22,6 +29,12 @@ let make = () => {
     <PartyForm
       heroes={heroState.heroes}
       submitParty={_ => Js.log("submitting party")}
+    />
+    <QuestUi
+      pendingQuests=questState.pendingQuests
+      completedQuests=questState.completedQuests
+      handleAddQuest=addQuest
+      handleResolveQuest={(~quest, ~party) => Js.log("resolving quest")}
     />
   </div>;
 };
