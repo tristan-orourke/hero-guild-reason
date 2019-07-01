@@ -25,7 +25,7 @@ function GuildInfo(Props) {
   return React.createElement("div", {
               className: "p-2"
             }, "Your Heroes", React.createElement("div", {
-                  className: "flex flex-col sm:flex-row"
+                  className: "flex flex-col sm:flex-row flex-wrap"
                 }, heroCards));
 }
 

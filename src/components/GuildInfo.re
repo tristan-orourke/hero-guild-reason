@@ -20,6 +20,6 @@ let make = (~heroes: list(Hero.hero)) => {
 
   <div className="p-2">
     {React.string("Your Heroes")}
-    <div className="flex flex-col sm:flex-row"> heroCards </div>
+    <div className="flex flex-col sm:flex-row flex-wrap"> heroCards </div>
   </div>;
 };
