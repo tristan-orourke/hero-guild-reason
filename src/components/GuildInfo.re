@@ -3,7 +3,7 @@ module HeroCard = {
   let make = (~hero: Hero.hero) => {
     <div className="max-w-xs rounded overflow-hidden shadow-lg p-2 m-2">
       <p> {React.string("Name: " ++ hero.name)} </p>
-      <p> {React.string("Skill: " ++ string_of_float(hero.skill))} </p>
+      <p> {React.string("Skill: " ++ Js.Float.toString(hero.skill))} </p>
     </div>;
   };
 };
@@ -20,6 +20,6 @@ let make = (~heroes: list(Hero.hero)) => {
 
   <div className="p-2">
     {React.string("Your Heroes")}
-    <div className="flex flex-col sm:flex-row"> heroCards </div>
+    <div className="flex flex-col sm:flex-row flex-wrap"> heroCards </div>
   </div>;
 };

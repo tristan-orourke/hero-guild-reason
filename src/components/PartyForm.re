@@ -104,30 +104,32 @@ let make = (~heroes: list(Hero.hero), ~submitParty: Quest.party => unit) => {
 
   <div className="p-2">
     <h3> {React.string("Select your pary")} </h3>
-    <HeroSelector
-      position="scout"
-      selectedHero=scout
-      heroOptions={availableOptions(~forceAllow=scout)}
-      handleChange={handleChange(setScout)}
-    />
-    <HeroSelector
-      position="leader"
-      selectedHero=leader
-      heroOptions={availableOptions(~forceAllow=leader)}
-      handleChange={handleChange(setLeader)}
-    />
-    <HeroSelector
-      position="defence"
-      selectedHero=defence
-      heroOptions={availableOptions(~forceAllow=defence)}
-      handleChange={handleChange(setDefence)}
-    />
-    <HeroSelector
-      position="support"
-      selectedHero=support
-      heroOptions={availableOptions(~forceAllow=support)}
-      handleChange={handleChange(setSupport)}
-    />
+    <div className="block">
+      <HeroSelector
+        position="scout"
+        selectedHero=scout
+        heroOptions={availableOptions(~forceAllow=scout)}
+        handleChange={handleChange(setScout)}
+      />
+      <HeroSelector
+        position="leader"
+        selectedHero=leader
+        heroOptions={availableOptions(~forceAllow=leader)}
+        handleChange={handleChange(setLeader)}
+      />
+      <HeroSelector
+        position="defence"
+        selectedHero=defence
+        heroOptions={availableOptions(~forceAllow=defence)}
+        handleChange={handleChange(setDefence)}
+      />
+      <HeroSelector
+        position="support"
+        selectedHero=support
+        heroOptions={availableOptions(~forceAllow=support)}
+        handleChange={handleChange(setSupport)}
+      />
+    </div>
     <button
       className=Styles.btnBlue
       type_="submit"

@@ -117,35 +117,37 @@ function PartyForm(Props) {
   };
   return React.createElement("div", {
               className: "p-2"
-            }, React.createElement("h3", undefined, "Select your pary"), React.createElement(PartyForm$HeroSelector, {
-                  position: "scout",
-                  selectedHero: scout,
-                  heroOptions: availableOptions(scout),
-                  handleChange: (function (param) {
-                      return handleChange(setScout, param);
-                    })
-                }), React.createElement(PartyForm$HeroSelector, {
-                  position: "leader",
-                  selectedHero: leader,
-                  heroOptions: availableOptions(leader),
-                  handleChange: (function (param) {
-                      return handleChange(setLeader, param);
-                    })
-                }), React.createElement(PartyForm$HeroSelector, {
-                  position: "defence",
-                  selectedHero: defence,
-                  heroOptions: availableOptions(defence),
-                  handleChange: (function (param) {
-                      return handleChange(setDefence, param);
-                    })
-                }), React.createElement(PartyForm$HeroSelector, {
-                  position: "support",
-                  selectedHero: support,
-                  heroOptions: availableOptions(support),
-                  handleChange: (function (param) {
-                      return handleChange(setSupport, param);
-                    })
-                }), React.createElement("button", {
+            }, React.createElement("h3", undefined, "Select your pary"), React.createElement("div", {
+                  className: "block"
+                }, React.createElement(PartyForm$HeroSelector, {
+                      position: "scout",
+                      selectedHero: scout,
+                      heroOptions: availableOptions(scout),
+                      handleChange: (function (param) {
+                          return handleChange(setScout, param);
+                        })
+                    }), React.createElement(PartyForm$HeroSelector, {
+                      position: "leader",
+                      selectedHero: leader,
+                      heroOptions: availableOptions(leader),
+                      handleChange: (function (param) {
+                          return handleChange(setLeader, param);
+                        })
+                    }), React.createElement(PartyForm$HeroSelector, {
+                      position: "defence",
+                      selectedHero: defence,
+                      heroOptions: availableOptions(defence),
+                      handleChange: (function (param) {
+                          return handleChange(setDefence, param);
+                        })
+                    }), React.createElement(PartyForm$HeroSelector, {
+                      position: "support",
+                      selectedHero: support,
+                      heroOptions: availableOptions(support),
+                      handleChange: (function (param) {
+                          return handleChange(setSupport, param);
+                        })
+                    })), React.createElement("button", {
                   className: Styles$HeroGuild.btnBlue,
                   type: "submit",
                   onClick: (function (param) {

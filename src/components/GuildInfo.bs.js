@@ -4,13 +4,12 @@
 var List = require("bs-platform/lib/js/list.js");
 var $$Array = require("bs-platform/lib/js/array.js");
 var React = require("react");
-var Pervasives = require("bs-platform/lib/js/pervasives.js");
 
 function GuildInfo$HeroCard(Props) {
   var hero = Props.hero;
   return React.createElement("div", {
               className: "max-w-xs rounded overflow-hidden shadow-lg p-2 m-2"
-            }, React.createElement("p", undefined, "Name: " + hero[/* name */1]), React.createElement("p", undefined, "Skill: " + Pervasives.string_of_float(hero[/* skill */2])));
+            }, React.createElement("p", undefined, "Name: " + hero[/* name */1]), React.createElement("p", undefined, "Skill: " + hero[/* skill */2].toString()));
 }
 
 var HeroCard = /* module */[/* make */GuildInfo$HeroCard];
@@ -26,7 +25,7 @@ function GuildInfo(Props) {
   return React.createElement("div", {
               className: "p-2"
             }, "Your Heroes", React.createElement("div", {
-                  className: "flex flex-col sm:flex-row"
+                  className: "flex flex-col sm:flex-row flex-wrap"
                 }, heroCards));
 }
 
