@@ -33,7 +33,7 @@ module QuestState = {
     | ResolveQuest(quest, party) => {
         pendingQuests:
           List.filter(
-            (item: Quest.quest) => item.id === quest.id,
+            (item: Quest.quest) => item.id !== quest.id,
             state.pendingQuests,
           ),
         completedQuests: [

@@ -21,20 +21,19 @@ let make = () => {
       AppState.QuestState.initQuest(),
     );
   let addQuest = quest => questDispatch(AppState.QuestState.AddQuest(quest));
+  let resolveQuest = (~quest, ~party) =>
+    questDispatch(AppState.QuestState.ResolveQuest(quest, party));
 
   <div className="container mx-auto object-top">
     <div className="p-2"> <h2> {React.string("Heroes Guild")} </h2> </div>
     <div> <HeroForm submitHero /> </div>
     <GuildInfo heroes={heroState.heroes} />
-    <PartyForm
-      heroes={heroState.heroes}
-      submitParty={_ => Js.log("submitting party")}
-    />
     <QuestUi
-      pendingQuests=questState.pendingQuests
-      completedQuests=questState.completedQuests
+      pendingQuests={questState.pendingQuests}
+      completedQuests={questState.completedQuests}
+      heroes={heroState.heroes}
       handleAddQuest=addQuest
-      handleResolveQuest={(~quest, ~party) => Js.log("resolving quest")}
+      handleResolveQuest=resolveQuest
     />
   </div>;
 };

@@ -20,9 +20,7 @@ module HeroSelector = {
             }
           }
           onChange=handleChange>
-          <option value="" disabled=true>
-            {React.string("fill position")}
-          </option>
+          <option value=""> {React.string("fill position")} </option>
           {List.map(
              (hero: Hero.hero): React.element =>
                <option value={hero.id} key={hero.id}>
@@ -63,9 +61,13 @@ let make = (~heroes: list(Hero.hero), ~submitParty: Quest.party => unit) => {
 
   let handleChange = (heroSetter, event) => {
     let selectedId = ReactEvent.Form.target(event)##value;
-    let hasId = (id, item: Hero.hero) => item.id === id;
-    let selectedHero = List.find(hasId(selectedId), heroes);
-    heroSetter(_ => Some(selectedHero));
+    if (selectedId === "") {
+      heroSetter(_ => None);
+    } else {
+      let hasId = (id, item: Hero.hero) => item.id === id;
+      let selectedHero = List.find(hasId(selectedId), heroes);
+      heroSetter(_ => Some(selectedHero));
+    };
   };
 
   let selectedHeros = (): list(Hero.hero) =>

@@ -32,7 +32,7 @@ function questReducer(state, action) {
     var quest = action[0];
     return /* record */[
             /* pendingQuests */List.filter((function (item) {
-                      return item[/* id */0] === quest[/* id */0];
+                      return item[/* id */0] !== quest[/* id */0];
                     }))(state[/* pendingQuests */0]),
             /* completedQuests : :: */[
               Quest$HeroGuild.resolveQuest(action[1], quest),
