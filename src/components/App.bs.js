@@ -8,7 +8,6 @@ var QuestUi$HeroGuild = require("./QuestUi.bs.js");
 var AppState$HeroGuild = require("../AppState.bs.js");
 var HeroForm$HeroGuild = require("./HeroForm.bs.js");
 var GuildInfo$HeroGuild = require("./GuildInfo.bs.js");
-var PartyForm$HeroGuild = require("./PartyForm.bs.js");
 
 function App(Props) {
   var match = React.useReducer(AppState$HeroGuild.HeroState[/* heroReducer */1], /* record */[/* heroes : :: */[
@@ -55,6 +54,12 @@ function App(Props) {
   var addQuest = function (quest) {
     return Curry._1(questDispatch, /* AddQuest */Block.__(0, [quest]));
   };
+  var resolveQuest = function (quest, party) {
+    return Curry._1(questDispatch, /* ResolveQuest */Block.__(1, [
+                  quest,
+                  party
+                ]));
+  };
   return React.createElement("div", {
               className: "container mx-auto object-top"
             }, React.createElement("div", {
@@ -63,21 +68,12 @@ function App(Props) {
                       submitHero: submitHero
                     })), React.createElement(GuildInfo$HeroGuild.make, {
                   heroes: heroState[/* heroes */0]
-                }), React.createElement(PartyForm$HeroGuild.make, {
-                  heroes: heroState[/* heroes */0],
-                  submitParty: (function (param) {
-                      console.log("submitting party");
-                      return /* () */0;
-                    })
                 }), React.createElement(QuestUi$HeroGuild.make, {
                   pendingQuests: questState[/* pendingQuests */0],
                   completedQuests: questState[/* completedQuests */1],
                   handleAddQuest: addQuest,
                   heroes: heroState[/* heroes */0],
-                  handleResolveQuest: (function (quest, party) {
-                      console.log("resolving quest");
-                      return /* () */0;
-                    })
+                  handleResolveQuest: resolveQuest
                 }));
 }
 
