@@ -1,4 +1,4 @@
-module QuestCard = {
+module QuestInfoCard = {
   [@react.component]
   let make = (~quest: Quest.quest) => {
     let locationString = (location: Quest.location): string =>
@@ -25,6 +25,31 @@ module QuestCard = {
   };
 };
 
+module QuestResolver = {
+  [@react.component]
+  let make =
+      (
+        ~quest: Quest.quest,
+        ~heroes: list(Hero.hero),
+        ~handleResolveQuest:
+           (~quest: Quest.quest, ~party: Quest.party) => unit,
+      ) => {
+    let (showParty, setShowParty) = React.useState(() => false);
+
+    let submitParty = party => handleResolveQuest(quest, party);
+
+    <div>
+      <button
+        className=Styles.btnBlue
+        type_="button"
+        onClick={_ => setShowParty(value => !value)}>
+        {React.string(showParty ? "Hide Party" : "Show Party")}
+      </button>
+      {showParty ? <PartyForm heroes submitParty /> : React.null}
+    </div>;
+  };
+};
+
 module QuestOutcomeCard = {
   [@react.component]
   let make = (~questHistory: Quest.questHistory) => {
@@ -40,6 +65,7 @@ let make =
       ~pendingQuests: list(Quest.quest),
       ~completedQuests: list(Quest.questHistory),
       ~handleAddQuest: Quest.quest => unit,
+      ~heroes: list(Hero.hero),
       ~handleResolveQuest: (~quest: Quest.quest, ~party: Quest.party) => unit,
     ) => {
   let generateQuest = (): Quest.quest => {
@@ -51,7 +77,23 @@ let make =
   };
 
   let questCards =
-    List.map(quest => <QuestCard quest key={quest.id} />, pendingQuests)
+    List.map(
+      (quest: Quest.quest) =>
+        <div key={quest.id}>
+          <QuestInfoCard quest />
+          <QuestResolver quest heroes handleResolveQuest />
+        </div>,
+      pendingQuests,
+    )
+    ->Array.of_list
+    ->React.array;
+
+  let questOutcomeCards =
+    List.map(
+      questHistory =>
+        <QuestOutcomeCard questHistory key={questHistory.quest.id} />,
+      completedQuests,
+    )
     ->Array.of_list
     ->React.array;
 
@@ -63,5 +105,7 @@ let make =
       {React.string("Generate Quest")}
     </button>
     <div className="flex flex-col sm:flex-row"> questCards </div>
+    <p> {React.string("Completed Quests:")} </p>
+    <div className="flex flex-col sm:flex-row"> questOutcomeCards </div>
   </div>;
 };

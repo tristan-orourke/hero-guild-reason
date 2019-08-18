@@ -31,9 +31,10 @@ let make = () => {
       submitParty={_ => Js.log("submitting party")}
     />
     <QuestUi
-      pendingQuests=questState.pendingQuests
-      completedQuests=questState.completedQuests
+      pendingQuests={questState.pendingQuests}
+      completedQuests={questState.completedQuests}
       handleAddQuest=addQuest
+      heroes={heroState.heroes}
       handleResolveQuest={(~quest, ~party) => Js.log("resolving quest")}
     />
   </div>;

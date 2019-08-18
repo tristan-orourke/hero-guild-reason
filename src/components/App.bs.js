@@ -73,6 +73,7 @@ function App(Props) {
                   pendingQuests: questState[/* pendingQuests */0],
                   completedQuests: questState[/* completedQuests */1],
                   handleAddQuest: addQuest,
+                  heroes: heroState[/* heroes */0],
                   handleResolveQuest: (function (quest, party) {
                       console.log("resolving quest");
                       return /* () */0;
