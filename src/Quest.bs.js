@@ -13,11 +13,11 @@ function calculateSuccess(totalChallenge, challengeWeights, party) {
   return (leaderSuccess + scoutSuccess + supportSuccess + defenceSuccess) / totalChallenge;
 }
 
-function newSupplyEncounter(questHistory) {
+function newSupplyEncounter(challenge) {
   return /* record */[
           /* description */"How many supplies will be spent and how will it affect hero comfort?",
           /* encounterType : Supply */0,
-          /* challenge */questHistory[/* quest */1][/* challenge */2],
+          /* challenge */challenge,
           /* challengeWeights : record */[
             /* scoutChallenge */1.0,
             /* leaderChallenge */0.0,
@@ -41,11 +41,11 @@ function resolveSupplyEncounter(encounter, questHistory) {
         ];
 }
 
-function newRewardEncounter(questHistory) {
+function newRewardEncounter(challenge) {
   return /* record */[
           /* description */"How much gold will be discovered by the Leader and Scout?",
           /* encounterType : Reward */1,
-          /* challenge */questHistory[/* quest */1][/* challenge */2],
+          /* challenge */challenge,
           /* challengeWeights : record */[
             /* scoutChallenge */1.0,
             /* leaderChallenge */1.0,
@@ -70,33 +70,71 @@ function resolveRewardEncounter(encounter, questHistory) {
         ];
 }
 
+function newAvoidInjuryEncounter(challenge) {
+  return /* record */[
+          /* description */"How effectively will the Scout and Defence avoid hero injuries?",
+          /* encounterType : AvoidInjury */2,
+          /* challenge */challenge,
+          /* challengeWeights : record */[
+            /* scoutChallenge */1.0,
+            /* leaderChallenge */0.0,
+            /* defenceChallenge */1.0,
+            /* supportChallenge */0.0
+          ]
+        ];
+}
+
+function resolveAvoidInjuryEncounter(encounter, questHistory) {
+  var degreeSuccess = calculateSuccess(encounter[/* challenge */2], encounter[/* challengeWeights */3], questHistory[/* party */0]);
+  var match = degreeSuccess < 1.0;
+  var damageTaken = match ? 1.0 - degreeSuccess : undefined;
+  return /* record */[
+          /* description */damageTaken !== undefined ? "The Defence hero took " + (damageTaken.toString() + " damage. Ouch!") : "The Scout and Defence avoided any injuries!",
+          /* questActions */damageTaken !== undefined ? /* :: */[
+              /* HeroInjury */Block.__(2, [/* record */[
+                    /* heroId */questHistory[/* party */0][/* defence */2][/* id */0],
+                    /* damage */damageTaken
+                  ]]),
+              /* [] */0
+            ] : /* [] */0,
+          /* heroActions : [] */0
+        ];
+}
+
 var Encounters = /* module */[
   /* calculateSuccess */calculateSuccess,
   /* newSupplyEncounter */newSupplyEncounter,
   /* resolveSupplyEncounter */resolveSupplyEncounter,
   /* newRewardEncounter */newRewardEncounter,
-  /* resolveRewardEncounter */resolveRewardEncounter
+  /* resolveRewardEncounter */resolveRewardEncounter,
+  /* newAvoidInjuryEncounter */newAvoidInjuryEncounter,
+  /* resolveAvoidInjuryEncounter */resolveAvoidInjuryEncounter
 ];
 
 function generateNextEncounter(questHistory) {
   var match = List.length(questHistory[/* history */2]);
-  if (match !== 0) {
-    if (match !== 1) {
+  switch (match) {
+    case 0 : 
+        return newSupplyEncounter(questHistory[/* quest */1][/* challenge */2]);
+    case 1 : 
+        return newRewardEncounter(questHistory[/* quest */1][/* challenge */2]);
+    case 2 : 
+        return newAvoidInjuryEncounter(questHistory[/* quest */1][/* challenge */2]);
+    default:
       return undefined;
-    } else {
-      return newRewardEncounter(questHistory);
-    }
-  } else {
-    return newSupplyEncounter(questHistory);
   }
 }
 
 function resolveEncounter(questHistory, encounter) {
   var match = encounter[/* encounterType */1];
-  if (match) {
-    return resolveRewardEncounter(encounter, questHistory);
-  } else {
-    return resolveSupplyEncounter(encounter, questHistory);
+  switch (match) {
+    case 0 : 
+        return resolveSupplyEncounter(encounter, questHistory);
+    case 1 : 
+        return resolveRewardEncounter(encounter, questHistory);
+    case 2 : 
+        return resolveAvoidInjuryEncounter(encounter, questHistory);
+    
   }
 }
 
