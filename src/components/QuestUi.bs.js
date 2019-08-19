@@ -71,7 +71,8 @@ function QuestUi(Props) {
             /* description */"Another Dummy Quest",
             /* challenge */0.5,
             /* location : Forest */0,
-            /* questType : ClearMonsters */0
+            /* questType : ClearMonsters */0,
+            /* supplyCost */1.0
           ];
   };
   var questCards = $$Array.of_list(List.map((function (quest) {

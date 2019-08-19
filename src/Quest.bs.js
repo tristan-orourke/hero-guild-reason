@@ -2,37 +2,102 @@
 'use strict';
 
 var List = require("bs-platform/lib/js/list.js");
+var Block = require("bs-platform/lib/js/block.js");
 
-function dummyEncounter(param) {
+function calculateSuccess(totalChallenge, challengeWeights, party) {
+  var totalWeight = challengeWeights[/* leaderChallenge */1] + challengeWeights[/* scoutChallenge */0] + challengeWeights[/* supportChallenge */3] + challengeWeights[/* defenceChallenge */2];
+  var leaderSuccess = challengeWeights[/* leaderChallenge */1] / totalWeight * party[/* leader */1][/* skill */2];
+  var scoutSuccess = challengeWeights[/* scoutChallenge */0] / totalWeight * party[/* scout */0][/* skill */2];
+  var supportSuccess = challengeWeights[/* supportChallenge */3] / totalWeight * party[/* support */3][/* skill */2];
+  var defenceSuccess = challengeWeights[/* defenceChallenge */2] / totalWeight * party[/* defence */2][/* skill */2];
+  return (leaderSuccess + scoutSuccess + supportSuccess + defenceSuccess) / totalChallenge;
+}
+
+function newSupplyEncounter(questHistory) {
   return /* record */[
-          /* description */"Dummy Encounter,",
-          /* scoutChallenge */0.0,
-          /* leaderChallenge */0.0,
-          /* defenceChallenge */0.0,
-          /* supportChallenge */0.0
+          /* description */"How many supplies will be spent and how will it affect hero comfort?",
+          /* encounterType : Supply */0,
+          /* challenge */questHistory[/* quest */1][/* challenge */2],
+          /* challengeWeights : record */[
+            /* scoutChallenge */1.0,
+            /* leaderChallenge */0.0,
+            /* defenceChallenge */0.0,
+            /* supportChallenge */1.0
+          ]
         ];
 }
 
-function generateNextEncounter(questHistory) {
-  if (List.length(questHistory[/* history */2]) > 5) {
-    return undefined;
-  } else {
-    return /* record */[
-            /* description */"Dummy Encounter,",
-            /* scoutChallenge */0.0,
-            /* leaderChallenge */0.0,
+function resolveSupplyEncounter(encounter, questHistory) {
+  var degreeSuccess = calculateSuccess(encounter[/* challenge */2], encounter[/* challengeWeights */3], questHistory[/* party */0]);
+  var match = degreeSuccess > 1.0;
+  var suppliesSpent = match ? 1.0 / degreeSuccess * questHistory[/* quest */1][/* supplyCost */5] : questHistory[/* quest */1][/* supplyCost */5];
+  return /* record */[
+          /* description */"The party had a degree of success = " + (degreeSuccess.toString() + (" and spent " + (suppliesSpent.toString() + " supplies"))),
+          /* questActions : :: */[
+            /* SpendSupplies */Block.__(1, [suppliesSpent]),
+            /* [] */0
+          ],
+          /* heroActions : [] */0
+        ];
+}
+
+function newRewardEncounter(questHistory) {
+  return /* record */[
+          /* description */"How much gold will be discovered by the Leader and Scout?",
+          /* encounterType : Reward */1,
+          /* challenge */questHistory[/* quest */1][/* challenge */2],
+          /* challengeWeights : record */[
+            /* scoutChallenge */1.0,
+            /* leaderChallenge */1.0,
             /* defenceChallenge */0.0,
             /* supportChallenge */0.0
-          ];
+          ]
+        ];
+}
+
+function resolveRewardEncounter(encounter, questHistory) {
+  var degreeSuccess = calculateSuccess(encounter[/* challenge */2], encounter[/* challengeWeights */3], questHistory[/* party */0]);
+  var match = questHistory[/* quest */1][/* questType */4];
+  var baseGold = match ? 15 : 10;
+  var goldGained = baseGold * degreeSuccess;
+  return /* record */[
+          /* description */"The party had a degree of success = " + (degreeSuccess.toString() + (" and gained " + (goldGained.toString() + " gold"))),
+          /* questActions : :: */[
+            /* GainGold */Block.__(0, [goldGained]),
+            /* [] */0
+          ],
+          /* heroActions : [] */0
+        ];
+}
+
+var Encounters = /* module */[
+  /* calculateSuccess */calculateSuccess,
+  /* newSupplyEncounter */newSupplyEncounter,
+  /* resolveSupplyEncounter */resolveSupplyEncounter,
+  /* newRewardEncounter */newRewardEncounter,
+  /* resolveRewardEncounter */resolveRewardEncounter
+];
+
+function generateNextEncounter(questHistory) {
+  var match = List.length(questHistory[/* history */2]);
+  if (match !== 0) {
+    if (match !== 1) {
+      return undefined;
+    } else {
+      return newRewardEncounter(questHistory);
+    }
+  } else {
+    return newSupplyEncounter(questHistory);
   }
 }
 
-function resolveEncounter(party, encounter) {
-  return /* record */[
-          /* description */"Dummy Result",
-          /* questActions : [] */0,
-          /* heroActions : [] */0
-        ];
+function resolveEncounter(questHistory, encounter) {
+  var match = encounter[/* encounterType */1];
+  if (match) {
+    return resolveRewardEncounter(encounter, questHistory);
+  } else {
+    return resolveSupplyEncounter(encounter, questHistory);
+  }
 }
 
 function resolveQuest(party, quest) {
@@ -46,13 +111,11 @@ function resolveQuest(party, quest) {
     ];
     var nextEncounter = generateNextEncounter(questHistory);
     if (nextEncounter !== undefined) {
+      var encounter = nextEncounter;
+      var resolution = resolveEncounter(questHistory, encounter);
       var newEncounterHistory_000 = /* record */[
-        /* encounter */nextEncounter,
-        /* encounterResult : record */[
-          /* description */"Dummy Result",
-          /* questActions : [] */0,
-          /* heroActions : [] */0
-        ]
+        /* encounter */encounter,
+        /* encounterResult */resolution
       ];
       var newEncounterHistory = /* :: */[
         newEncounterHistory_000,
@@ -70,7 +133,7 @@ function resolveQuest(party, quest) {
         ];
 }
 
-exports.dummyEncounter = dummyEncounter;
+exports.Encounters = Encounters;
 exports.generateNextEncounter = generateNextEncounter;
 exports.resolveEncounter = resolveEncounter;
 exports.resolveQuest = resolveQuest;

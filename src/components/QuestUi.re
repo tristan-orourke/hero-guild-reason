@@ -74,6 +74,7 @@ let make =
     challenge: 0.5,
     location: Forest,
     questType: ClearMonsters,
+    supplyCost: 1.0,
   };
 
   let questCards =
