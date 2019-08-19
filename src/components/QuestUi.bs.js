@@ -51,10 +51,17 @@ function QuestUi$QuestResolver(Props) {
 var QuestResolver = /* module */[/* make */QuestUi$QuestResolver];
 
 function QuestUi$QuestOutcomeCard(Props) {
-  Props.questHistory;
+  var questHistory = Props.questHistory;
+  var questDescriptions = List.mapi((function (index, description) {
+          return React.createElement("p", {
+                      key: String(index)
+                    }, description);
+        }), List.map((function (questHistoryItem) {
+              return questHistoryItem[/* encounterResult */1][/* description */0];
+            }), questHistory[/* history */2]));
   return React.createElement("div", {
               className: "rounded overflow-hidden shadow-lg p-2 m-2"
-            }, React.createElement("p", undefined, "encounter => result"));
+            }, $$Array.of_list(questDescriptions));
 }
 
 var QuestOutcomeCard = /* module */[/* make */QuestUi$QuestOutcomeCard];

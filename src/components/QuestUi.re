@@ -53,8 +53,18 @@ module QuestResolver = {
 module QuestOutcomeCard = {
   [@react.component]
   let make = (~questHistory: Quest.questHistory) => {
+    let questDescriptions =
+      List.map(
+        (questHistoryItem: Quest.questHistoryItem): string =>
+          questHistoryItem.encounterResult.description,
+        questHistory.history,
+      )
+      |> List.mapi((index: int, description: string) =>
+           <p key={string_of_int(index)}> {React.string(description)} </p>
+         );
+
     <div className="rounded overflow-hidden shadow-lg p-2 m-2">
-      <p> {React.string("encounter => result")} </p>
+      {Array.of_list(questDescriptions)->React.array}
     </div>;
   };
 };
