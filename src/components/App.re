@@ -31,8 +31,8 @@ let make = () => {
     <QuestUi
       pendingQuests={questState.pendingQuests}
       completedQuests={questState.completedQuests}
-      heroes={heroState.heroes}
       handleAddQuest=addQuest
+      heroes={heroState.heroes}
       handleResolveQuest=resolveQuest
     />
   </div>;

@@ -73,6 +73,10 @@ function App(Props) {
                   completedQuests: questState[/* completedQuests */1],
                   heroes: heroState[/* heroes */0],
                   handleAddQuest: addQuest,
+<<<<<<< HEAD
+=======
+                  heroes: heroState[/* heroes */0],
+>>>>>>> c16d31c4669070e3bcfc9988fc8a9290a349f4df
                   handleResolveQuest: resolveQuest
                 }));
 }

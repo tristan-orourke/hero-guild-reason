@@ -1,4 +1,4 @@
-module QuestCard = {
+module QuestInfoCard = {
   [@react.component]
   let make = (~quest: Quest.quest) => {
     let locationString = (location: Quest.location): string =>
@@ -21,6 +21,31 @@ module QuestCard = {
       <p>
         {React.string("Quest Type: " ++ questTypeString(quest.questType))}
       </p>
+    </div>;
+  };
+};
+
+module QuestResolver = {
+  [@react.component]
+  let make =
+      (
+        ~quest: Quest.quest,
+        ~heroes: list(Hero.hero),
+        ~handleResolveQuest:
+           (~quest: Quest.quest, ~party: Quest.party) => unit,
+      ) => {
+    let (showParty, setShowParty) = React.useState(() => false);
+
+    let submitParty = party => handleResolveQuest(quest, party);
+
+    <div>
+      <button
+        className=Styles.btnBlue
+        type_="button"
+        onClick={_ => setShowParty(value => !value)}>
+        {React.string(showParty ? "Hide Party" : "Show Party")}
+      </button>
+      {showParty ? <PartyForm heroes submitParty /> : React.null}
     </div>;
   };
 };
@@ -56,6 +81,7 @@ let make =
       ~completedQuests: list(Quest.questHistory),
       ~heroes: list(Hero.hero),
       ~handleAddQuest: Quest.quest => unit,
+      ~heroes: list(Hero.hero),
       ~handleResolveQuest: (~quest: Quest.quest, ~party: Quest.party) => unit,
     ) => {
   let generateQuest = (): Quest.quest => {
@@ -68,19 +94,17 @@ let make =
 
   let questCards =
     List.map(
-      quest =>
-        <SetupQuest
-          quest
-          heroes
-          startQuest=handleResolveQuest
-          key={quest.id}
-        />,
+      (quest: Quest.quest) =>
+        <div key={quest.id}>
+          <QuestInfoCard quest />
+          <QuestResolver quest heroes handleResolveQuest />
+        </div>,
       pendingQuests,
     )
     ->Array.of_list
     ->React.array;
 
-  let completedQuestCards =
+  let questOutcomeCards =
     List.map(
       questHistory =>
         <QuestOutcomeCard questHistory key={questHistory.quest.id} />,
@@ -96,9 +120,8 @@ let make =
       onClick={_ => handleAddQuest(generateQuest())}>
       {React.string("Generate Quest")}
     </button>
-    <h3> {React.string("Pending Quests")} </h3>
-    <div className="flex flex-col"> questCards </div>
-    <h3> {React.string("Completed Quests")} </h3>
-    <div className="flex flex-col"> completedQuestCards </div>
+    <div className="flex flex-col sm:flex-row"> questCards </div>
+    <p> {React.string("Completed Quests:")} </p>
+    <div className="flex flex-col sm:flex-row"> questOutcomeCards </div>
   </div>;
 };

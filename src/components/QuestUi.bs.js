@@ -9,7 +9,7 @@ var Uuid$HeroGuild = require("../Uuid.bs.js");
 var Styles$HeroGuild = require("../Styles.bs.js");
 var PartyForm$HeroGuild = require("./PartyForm.bs.js");
 
-function QuestUi$QuestCard(Props) {
+function QuestUi$QuestInfoCard(Props) {
   var quest = Props.quest;
   return React.createElement("div", {
               className: "max-w-xs rounded overflow-hidden shadow-lg p-2 m-2"
@@ -20,7 +20,35 @@ function QuestUi$QuestCard(Props) {
                 )));
 }
 
-var QuestCard = /* module */[/* make */QuestUi$QuestCard];
+var QuestInfoCard = /* module */[/* make */QuestUi$QuestInfoCard];
+
+function QuestUi$QuestResolver(Props) {
+  var quest = Props.quest;
+  var heroes = Props.heroes;
+  var handleResolveQuest = Props.handleResolveQuest;
+  var match = React.useState((function () {
+          return false;
+        }));
+  var setShowParty = match[1];
+  var showParty = match[0];
+  var submitParty = function (party) {
+    return Curry._2(handleResolveQuest, quest, party);
+  };
+  return React.createElement("div", undefined, React.createElement("button", {
+                  className: Styles$HeroGuild.btnBlue,
+                  type: "button",
+                  onClick: (function (param) {
+                      return Curry._1(setShowParty, (function (value) {
+                                    return !value;
+                                  }));
+                    })
+                }, showParty ? "Hide Party" : "Show Party"), showParty ? React.createElement(PartyForm$HeroGuild.make, {
+                    heroes: heroes,
+                    submitParty: submitParty
+                  }) : null);
+}
+
+var QuestResolver = /* module */[/* make */QuestUi$QuestResolver];
 
 function QuestUi$QuestOutcomeCard(Props) {
   Props.questHistory;
@@ -52,8 +80,13 @@ var SetupQuest = /* module */[/* make */QuestUi$SetupQuest];
 function QuestUi(Props) {
   var pendingQuests = Props.pendingQuests;
   var completedQuests = Props.completedQuests;
+<<<<<<< HEAD
   var heroes = Props.heroes;
   var handleAddQuest = Props.handleAddQuest;
+=======
+  var handleAddQuest = Props.handleAddQuest;
+  var heroes = Props.heroes;
+>>>>>>> c16d31c4669070e3bcfc9988fc8a9290a349f4df
   var handleResolveQuest = Props.handleResolveQuest;
   var generateQuest = function (param) {
     return /* record */[
@@ -65,14 +98,28 @@ function QuestUi(Props) {
           ];
   };
   var questCards = $$Array.of_list(List.map((function (quest) {
+<<<<<<< HEAD
               return React.createElement(QuestUi$SetupQuest, {
                           quest: quest,
                           heroes: heroes,
                           startQuest: handleResolveQuest,
+=======
+              return React.createElement("div", {
+>>>>>>> c16d31c4669070e3bcfc9988fc8a9290a349f4df
                           key: quest[/* id */0]
-                        });
+                        }, React.createElement(QuestUi$QuestInfoCard, {
+                              quest: quest
+                            }), React.createElement(QuestUi$QuestResolver, {
+                              quest: quest,
+                              heroes: heroes,
+                              handleResolveQuest: handleResolveQuest
+                            }));
             }), pendingQuests));
+<<<<<<< HEAD
   var completedQuestCards = $$Array.of_list(List.map((function (questHistory) {
+=======
+  var questOutcomeCards = $$Array.of_list(List.map((function (questHistory) {
+>>>>>>> c16d31c4669070e3bcfc9988fc8a9290a349f4df
               return React.createElement(QuestUi$QuestOutcomeCard, {
                           questHistory: questHistory,
                           key: questHistory[/* quest */1][/* id */0]
@@ -86,16 +133,25 @@ function QuestUi(Props) {
                   onClick: (function (param) {
                       return Curry._1(handleAddQuest, generateQuest(/* () */0));
                     })
+<<<<<<< HEAD
                 }, "Generate Quest"), React.createElement("h3", undefined, "Pending Quests"), React.createElement("div", {
                   className: "flex flex-col"
                 }, questCards), React.createElement("h3", undefined, "Completed Quests"), React.createElement("div", {
                   className: "flex flex-col"
                 }, completedQuestCards));
+=======
+                }, "Generate Quest"), React.createElement("div", {
+                  className: "flex flex-col sm:flex-row"
+                }, questCards), React.createElement("p", undefined, "Completed Quests:"), React.createElement("div", {
+                  className: "flex flex-col sm:flex-row"
+                }, questOutcomeCards));
+>>>>>>> c16d31c4669070e3bcfc9988fc8a9290a349f4df
 }
 
 var make = QuestUi;
 
-exports.QuestCard = QuestCard;
+exports.QuestInfoCard = QuestInfoCard;
+exports.QuestResolver = QuestResolver;
 exports.QuestOutcomeCard = QuestOutcomeCard;
 exports.SetupQuest = SetupQuest;
 exports.make = make;
