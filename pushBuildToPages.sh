@@ -5,7 +5,7 @@ then
     sed -i '/build/d' ./.gitignore
     git add .
     git commit -m "Edit .gitignore to publish"
-    git push origin `git subtree split --prefix gh-pages master`:gh-pages --force
+    git subtree push --prefix build origin gh-pages
     git reset HEAD~
     git checkout .gitignore
 else 
