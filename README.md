@@ -1,5 +1,7 @@
 # hero-guild-reason
 
+View current build at https://tristan-orourke.github.io/hero-guild/.
+
 ## Run Project
 
 ```sh
