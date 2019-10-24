@@ -71,8 +71,8 @@ function App(Props) {
                 }), React.createElement(QuestUi$HeroGuild.make, {
                   pendingQuests: questState[/* pendingQuests */0],
                   completedQuests: questState[/* completedQuests */1],
-                  handleAddQuest: addQuest,
                   heroes: heroState[/* heroes */0],
+                  handleAddQuest: addQuest,
                   handleResolveQuest: resolveQuest
                 }));
 }

@@ -51,24 +51,42 @@ function QuestUi$QuestResolver(Props) {
 var QuestResolver = /* module */[/* make */QuestUi$QuestResolver];
 
 function QuestUi$QuestOutcomeCard(Props) {
-  Props.questHistory;
+  var questHistory = Props.questHistory;
   return React.createElement("div", {
               className: "rounded overflow-hidden shadow-lg p-2 m-2"
-            }, React.createElement("p", undefined, "encounter => result"));
+            }, React.createElement("p", undefined, "Quest complete: " + questHistory[/* quest */1][/* description */1]));
 }
 
 var QuestOutcomeCard = /* module */[/* make */QuestUi$QuestOutcomeCard];
 
+function QuestUi$SetupQuest(Props) {
+  var quest = Props.quest;
+  var heroes = Props.heroes;
+  var startQuest = Props.startQuest;
+  return React.createElement("div", {
+              className: "block"
+            }, React.createElement(QuestUi$QuestInfoCard, {
+                  quest: quest
+                }), React.createElement(PartyForm$HeroGuild.make, {
+                  heroes: heroes,
+                  submitParty: (function (party) {
+                      return Curry._2(startQuest, quest, party);
+                    })
+                }));
+}
+
+var SetupQuest = /* module */[/* make */QuestUi$SetupQuest];
+
 function QuestUi(Props) {
   var pendingQuests = Props.pendingQuests;
   var completedQuests = Props.completedQuests;
-  var handleAddQuest = Props.handleAddQuest;
   var heroes = Props.heroes;
+  var handleAddQuest = Props.handleAddQuest;
   var handleResolveQuest = Props.handleResolveQuest;
   var generateQuest = function (param) {
     return /* record */[
             /* id */Uuid$HeroGuild.questId(/* () */0),
-            /* description */"Another Dummy Quest",
+            /* description */"Another Dummy Quest #" + String(Uuid$HeroGuild.lastId[0]),
             /* challenge */0.5,
             /* location : Forest */0,
             /* questType : ClearMonsters */0
@@ -111,5 +129,6 @@ var make = QuestUi;
 exports.QuestInfoCard = QuestInfoCard;
 exports.QuestResolver = QuestResolver;
 exports.QuestOutcomeCard = QuestOutcomeCard;
+exports.SetupQuest = SetupQuest;
 exports.make = make;
 /* react Not a pure module */

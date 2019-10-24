@@ -23,7 +23,6 @@ function PartyForm$HeroSelector(Props) {
                       value: selectedHero !== undefined ? selectedHero[/* id */0] : "",
                       onChange: handleChange
                     }, React.createElement("option", {
-                          disabled: true,
                           value: ""
                         }, "fill position"), $$Array.of_list(List.map((function (hero) {
                                 return React.createElement("option", {
@@ -68,12 +67,18 @@ function PartyForm(Props) {
   var support = match$3[0];
   var handleChange = function (heroSetter, $$event) {
     var selectedId = $$event.target.value;
-    var selectedHero = List.find((function (param) {
-            return param[/* id */0] === selectedId;
-          }), heroes);
-    return Curry._1(heroSetter, (function (param) {
-                  return selectedHero;
-                }));
+    if (selectedId === "") {
+      return Curry._1(heroSetter, (function (param) {
+                    return undefined;
+                  }));
+    } else {
+      var selectedHero = List.find((function (param) {
+              return param[/* id */0] === selectedId;
+            }), heroes);
+      return Curry._1(heroSetter, (function (param) {
+                    return selectedHero;
+                  }));
+    }
   };
   var selectedHeros = function (param) {
     return Belt_List.keepMap(/* :: */[
