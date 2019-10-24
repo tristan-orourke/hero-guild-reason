@@ -54,7 +54,9 @@ module QuestOutcomeCard = {
   [@react.component]
   let make = (~questHistory: Quest.questHistory) => {
     <div className="rounded overflow-hidden shadow-lg p-2 m-2">
-      <p> {React.string("encounter => result")} </p>
+      <p>
+        {React.string("Quest complete: " ++ questHistory.quest.description)}
+      </p>
     </div>;
   };
 };
@@ -68,7 +70,7 @@ module SetupQuest = {
         ~startQuest: (~quest: Quest.quest, ~party: Quest.party) => unit,
       ) => {
     <div className="block">
-      <QuestCard quest />
+      <QuestInfoCard quest />
       <PartyForm heroes submitParty={party => startQuest(~quest, ~party)} />
     </div>;
   };
@@ -81,7 +83,6 @@ let make =
       ~completedQuests: list(Quest.questHistory),
       ~heroes: list(Hero.hero),
       ~handleAddQuest: Quest.quest => unit,
-      ~heroes: list(Hero.hero),
       ~handleResolveQuest: (~quest: Quest.quest, ~party: Quest.party) => unit,
     ) => {
   let generateQuest = (): Quest.quest => {
