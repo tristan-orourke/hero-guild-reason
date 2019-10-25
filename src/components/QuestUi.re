@@ -64,7 +64,24 @@ module QuestOutcomeCard = {
          );
 
     <div className="rounded overflow-hidden shadow-lg p-2 m-2">
-      {Array.of_list(questDescriptions)->React.array}
+      <p>
+        {React.string("Quest complete: " ++ questHistory.quest.description)}
+      </p>
+    </div>;
+  };
+};
+
+module SetupQuest = {
+  [@react.component]
+  let make =
+      (
+        ~quest: Quest.quest,
+        ~heroes: list(Hero.hero),
+        ~startQuest: (~quest: Quest.quest, ~party: Quest.party) => unit,
+      ) => {
+    <div className="block">
+      <QuestInfoCard quest />
+      <PartyForm heroes submitParty={party => startQuest(~quest, ~party)} />
     </div>;
   };
 };
@@ -74,13 +91,13 @@ let make =
     (
       ~pendingQuests: list(Quest.quest),
       ~completedQuests: list(Quest.questHistory),
-      ~handleAddQuest: Quest.quest => unit,
       ~heroes: list(Hero.hero),
+      ~handleAddQuest: Quest.quest => unit,
       ~handleResolveQuest: (~quest: Quest.quest, ~party: Quest.party) => unit,
     ) => {
   let generateQuest = (): Quest.quest => {
     id: Uuid.questId(),
-    description: "Another Dummy Quest",
+    description: "Another Dummy Quest #" ++ string_of_int(Uuid.lastId^),
     challenge: 0.5,
     location: Forest,
     questType: ClearMonsters,
