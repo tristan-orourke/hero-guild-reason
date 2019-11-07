@@ -1,4 +1,6 @@
-type submitHero = Hero.hero => unit;
+open DomainTypes;
+
+type submitHero = hero => unit;
 [@react.component]
 let make = (~submitHero: submitHero) => {
   let getValue = (event): string => ReactEvent.Form.target(event)##value;
@@ -10,7 +12,7 @@ let make = (~submitHero: submitHero) => {
   let (skill, setSkill) = React.useState(() => 0.5);
 
   let submit = () => {
-    let hero: Hero.hero = {id: Uuid.heroId(), name, skill, relationships: []};
+    let hero: hero = {id: Uuid.heroId(), name, skill, relationships: []};
     submitHero(hero);
   };
 

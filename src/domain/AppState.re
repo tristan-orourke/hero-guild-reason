@@ -1,8 +1,10 @@
+open DomainTypes;
+
 module HeroState = {
-  type heroState = {heroes: list(Hero.hero)};
+  type heroState = {heroes: list(hero)};
 
   type heroAction =
-    | AddHero(Hero.hero);
+    | AddHero(hero);
 
   let initHero = (): heroState => {heroes: []};
 
@@ -14,13 +16,13 @@ module HeroState = {
 
 module QuestState = {
   type questState = {
-    pendingQuests: list(Quest.quest),
-    completedQuests: list(Quest.questHistory),
+    pendingQuests: list(quest),
+    completedQuests: list(questHistory),
   };
 
   type questAction =
-    | AddQuest(Quest.quest)
-    | ResolveQuest(Quest.quest, Quest.party);
+    | AddQuest(quest)
+    | ResolveQuest(quest, party);
 
   let initQuest = (): questState => {pendingQuests: [], completedQuests: []};
 
@@ -33,7 +35,7 @@ module QuestState = {
     | ResolveQuest(quest, party) => {
         pendingQuests:
           List.filter(
-            (item: Quest.quest) => item.id !== quest.id,
+            (item: quest) => item.id !== quest.id,
             state.pendingQuests,
           ),
         completedQuests: [

@@ -1,51 +1,4 @@
-type party = {
-  scout: Hero.hero,
-  leader: Hero.hero,
-  defence: Hero.hero,
-  support: Hero.hero,
-};
-
-type questAction =
-  | GainGold(int);
-
-type location =
-  | Forest
-  | Ruin;
-type questType =
-  | ClearMonsters
-  | Guard;
-
-type encounter = {
-  description: string,
-  scoutChallenge: float,
-  leaderChallenge: float,
-  defenceChallenge: float,
-  supportChallenge: float,
-}
-and encounterResult = {
-  description: string,
-  questActions: list(questAction),
-  heroActions: list(Hero.heroAction),
-};
-
-type quest = {
-  id: string,
-  description: string,
-  challenge: float,
-  location,
-  questType,
-};
-
-type questHistoryItem = {
-  encounter,
-  encounterResult,
-};
-
-type questHistory = {
-  party,
-  quest,
-  history: list(questHistoryItem),
-};
+open DomainTypes;
 
 let dummyEncounter = (): encounter => {
   description: "Dummy Encounter,",
@@ -90,7 +43,7 @@ let resolveQuest = (~party, ~quest): questHistory => {
     };
   };
   {party, quest, history: encounterHistory^};
-} /* }*/;
+} /* }*/ /*   */;
 
 // let generateQuestEncounter = (rand: rand, quest): encounter => {
 //   switch(quest.questType, quest.location) {
@@ -98,4 +51,3 @@ let resolveQuest = (~party, ~quest): questHistory => {
 //     | (ClearMonsters, Ruin) => ;
 //     | (Guard, Forest) => ;
 //     | (Guard, Ruin) => ;
-//   }

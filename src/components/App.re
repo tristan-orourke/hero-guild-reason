@@ -1,6 +1,8 @@
+open DomainTypes;
+
 [@react.component]
 let make = () => {
-  let initialHeros: list(Hero.hero) = [
+  let initialHeros: list(hero) = [
     {id: "hero:-1", name: "Johnny Appleseed", skill: 0.2, relationships: []},
     {id: "hero:-2", name: "Anny Dragonhear", skill: 0.35, relationships: []},
     {id: "hero:-3", name: "Bolton Spaltipur", skill: 0.25, relationships: []},
