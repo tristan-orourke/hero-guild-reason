@@ -5,7 +5,7 @@ var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var QuestUi$HeroGuild = require("./QuestUi.bs.js");
-var AppState$HeroGuild = require("../AppState.bs.js");
+var AppState$HeroGuild = require("../domain/AppState.bs.js");
 var HeroForm$HeroGuild = require("./HeroForm.bs.js");
 var GuildInfo$HeroGuild = require("./GuildInfo.bs.js");
 
