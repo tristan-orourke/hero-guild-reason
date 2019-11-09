@@ -17,7 +17,7 @@ function toString(t) {
   return t;
 }
 
-var ID = /* module */[
+var Id = /* module */[
   /* newId */newId,
   /* toString */toString
 ];
@@ -67,6 +67,6 @@ function Random$1(funarg) {
         ];
 }
 
-exports.ID = ID;
+exports.Id = Id;
 exports.Random = Random$1;
 /* No side effect */

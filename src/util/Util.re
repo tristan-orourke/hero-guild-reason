@@ -1,4 +1,4 @@
-module ID: {
+module Id: {
   type t;
   let newId: string => t;
   let toString: t => string;
