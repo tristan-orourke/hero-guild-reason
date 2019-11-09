@@ -1,7 +1,6 @@
 module Id: {
-  type t;
+  type t = string;
   let newId: string => t;
-  let toString: t => string;
 } = {
   type t = string;
   // TODO: make this more robust, and maybe pure?
@@ -10,7 +9,6 @@ module Id: {
     lastId := lastId^ + 1;
     prefix ++ ":" ++ string_of_int(lastId^);
   };
-  let toString = t => t;
 };
 
 module type RandomGen = {

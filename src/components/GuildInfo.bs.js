@@ -4,12 +4,14 @@
 var List = require("bs-platform/lib/js/list.js");
 var $$Array = require("bs-platform/lib/js/array.js");
 var React = require("react");
+var Domain$HeroGuild = require("../domain/Domain.bs.js");
 
 function GuildInfo$HeroCard(Props) {
   var hero = Props.hero;
+  var view = Domain$HeroGuild.Hero[/* view */1](hero);
   return React.createElement("div", {
               className: "max-w-xs rounded overflow-hidden shadow-lg p-2 m-2"
-            }, React.createElement("p", undefined, "Name: " + hero[/* name */1]), React.createElement("p", undefined, "Skill: " + hero[/* skill */2].toString()));
+            }, React.createElement("p", undefined, "Name: " + view[/* name */1]), React.createElement("p", undefined, "Skill: " + view[/* skill */2].toString()));
 }
 
 var HeroCard = /* module */[/* make */GuildInfo$HeroCard];
@@ -19,7 +21,7 @@ function GuildInfo(Props) {
   var heroCards = $$Array.of_list(List.map((function (hero) {
               return React.createElement(GuildInfo$HeroCard, {
                           hero: hero,
-                          key: hero[/* id */0]
+                          key: Domain$HeroGuild.Hero[/* getId */0](hero)
                         });
             }), heroes));
   return React.createElement("div", {

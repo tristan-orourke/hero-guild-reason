@@ -13,14 +13,7 @@ function newId(prefix) {
   return prefix + (":" + String(lastId[0]));
 }
 
-function toString(t) {
-  return t;
-}
-
-var Id = /* module */[
-  /* newId */newId,
-  /* toString */toString
-];
+var Id = /* module */[/* newId */newId];
 
 function Random$1(funarg) {
   var randomInt = function (min, max, g) {

@@ -6,6 +6,8 @@ var $$Array = require("bs-platform/lib/js/array.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
+var Caml_option = require("bs-platform/lib/js/caml_option.js");
+var Domain$HeroGuild = require("../domain/Domain.bs.js");
 var Styles$HeroGuild = require("../Styles.bs.js");
 
 function PartyForm$HeroSelector(Props) {
@@ -20,7 +22,7 @@ function PartyForm$HeroSelector(Props) {
                 }, position + ": ", React.createElement("select", {
                       className: Styles$HeroGuild.input,
                       name: position,
-                      value: selectedHero !== undefined ? selectedHero[/* id */0] : "",
+                      value: selectedHero !== undefined ? Domain$HeroGuild.Hero[/* getId */0](Caml_option.valFromOption(selectedHero)) : "",
                       onChange: handleChange
                     }, React.createElement("option", {
                           value: ""
@@ -29,7 +31,7 @@ function PartyForm$HeroSelector(Props) {
                                             key: hero[/* id */0],
                                             value: hero[/* id */0]
                                           }, hero[/* name */1]);
-                              }), heroOptions)))), React.createElement("div", {
+                              }), List.map(Domain$HeroGuild.Hero[/* view */1], heroOptions))))), React.createElement("div", {
                   className: "pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
                 }, React.createElement("svg", {
                       className: "fill-current h-4 w-4",
@@ -73,10 +75,12 @@ function PartyForm(Props) {
                   }));
     } else {
       var selectedHero = List.find((function (param) {
-              return param[/* id */0] === selectedId;
+              var id = selectedId;
+              var item = param;
+              return Domain$HeroGuild.Hero[/* getId */0](item) === id;
             }), heroes);
       return Curry._1(heroSetter, (function (param) {
-                    return selectedHero;
+                    return Caml_option.some(selectedHero);
                   }));
     }
   };
@@ -105,7 +109,7 @@ function PartyForm(Props) {
   var availableOptions = function (forceAllow) {
     var heroFilter;
     if (forceAllow !== undefined) {
-      var forceHero = forceAllow;
+      var forceHero = Caml_option.valFromOption(forceAllow);
       heroFilter = (function (hero) {
           if (hero === forceHero) {
             return true;
@@ -158,10 +162,10 @@ function PartyForm(Props) {
                   onClick: (function (param) {
                       if (scout !== undefined && leader !== undefined && defence !== undefined && support !== undefined) {
                         return Curry._1(submitParty, /* record */[
-                                    /* scout */scout,
-                                    /* leader */leader,
-                                    /* defence */defence,
-                                    /* support */support
+                                    /* scout */Caml_option.valFromOption(scout),
+                                    /* leader */Caml_option.valFromOption(leader),
+                                    /* defence */Caml_option.valFromOption(defence),
+                                    /* support */Caml_option.valFromOption(support)
                                   ]);
                       } else {
                         console.log("Cannot submit party until all positions filled");

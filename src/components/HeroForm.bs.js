@@ -4,8 +4,8 @@
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var Caml_format = require("bs-platform/lib/js/caml_format.js");
-var Uuid$HeroGuild = require("../Uuid.bs.js");
 var Forms$HeroGuild = require("./Forms.bs.js");
+var Domain$HeroGuild = require("../domain/Domain.bs.js");
 var Styles$HeroGuild = require("../Styles.bs.js");
 
 function HeroForm(Props) {
@@ -50,12 +50,7 @@ function HeroForm(Props) {
                   className: Styles$HeroGuild.btnBlue,
                   type: "submit",
                   onClick: (function (param) {
-                      return Curry._1(submitHero, /* record */[
-                                  /* id */Uuid$HeroGuild.heroId(/* () */0),
-                                  /* name */name,
-                                  /* skill */skill,
-                                  /* relationships : [] */0
-                                ]);
+                      return Curry._1(submitHero, Domain$HeroGuild.Hero[/* make */3](name, skill));
                     })
                 }, "submit"));
 }

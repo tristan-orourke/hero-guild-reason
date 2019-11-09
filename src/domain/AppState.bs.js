@@ -2,7 +2,7 @@
 'use strict';
 
 var List = require("bs-platform/lib/js/list.js");
-var Quest$HeroGuild = require("./Quest.bs.js");
+var Domain$HeroGuild = require("./Domain.bs.js");
 
 function initHero(param) {
   return /* record */[/* heroes : [] */0];
@@ -35,7 +35,7 @@ function questReducer(state, action) {
                       return item[/* id */0] !== quest[/* id */0];
                     }))(state[/* pendingQuests */0]),
             /* completedQuests : :: */[
-              Quest$HeroGuild.resolveQuest(action[1], quest),
+              Domain$HeroGuild.Quest[/* resolveQuest */3](action[1], quest),
               state[/* completedQuests */1]
             ]
           ];

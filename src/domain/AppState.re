@@ -1,8 +1,10 @@
+open Domain;
+
 module HeroState = {
-  type heroState = {heroes: list(Hero.hero)};
+  type heroState = {heroes: list(Hero.t)};
 
   type heroAction =
-    | AddHero(Hero.hero);
+    | AddHero(Hero.t);
 
   let initHero = (): heroState => {heroes: []};
 

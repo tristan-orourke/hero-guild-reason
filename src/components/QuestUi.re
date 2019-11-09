@@ -1,3 +1,5 @@
+open Domain;
+
 module QuestInfoCard = {
   [@react.component]
   let make = (~quest: Quest.quest) => {
@@ -30,7 +32,7 @@ module QuestResolver = {
   let make =
       (
         ~quest: Quest.quest,
-        ~heroes: list(Hero.hero),
+        ~heroes: list(Hero.t),
         ~handleResolveQuest:
            (~quest: Quest.quest, ~party: Quest.party) => unit,
       ) => {
@@ -66,7 +68,7 @@ module SetupQuest = {
   let make =
       (
         ~quest: Quest.quest,
-        ~heroes: list(Hero.hero),
+        ~heroes: list(Hero.t),
         ~startQuest: (~quest: Quest.quest, ~party: Quest.party) => unit,
       ) => {
     <div className="block">
@@ -81,7 +83,7 @@ let make =
     (
       ~pendingQuests: list(Quest.quest),
       ~completedQuests: list(Quest.questHistory),
-      ~heroes: list(Hero.hero),
+      ~heroes: list(Hero.t),
       ~handleAddQuest: Quest.quest => unit,
       ~handleResolveQuest: (~quest: Quest.quest, ~party: Quest.party) => unit,
     ) => {
