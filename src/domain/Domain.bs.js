@@ -52,49 +52,41 @@ function gold(value) {
 
 var Reward = /* module */[/* gold */gold];
 
-function branch(description, $staropt$star, $$default) {
+function branch($staropt$star, $$default) {
   var options = $staropt$star !== undefined ? $staropt$star : /* [] */0;
   return /* Branch */Block.__(0, [
-            description,
             options,
             $$default
           ]);
 }
 
-function travel(description, difficulty, next) {
+function travel(difficulty, next) {
   return /* Travel */Block.__(1, [
-            description,
             difficulty,
             next
           ]);
 }
 
-function defend(description, difficulty, next) {
+function defend(difficulty, next) {
   return /* Defend */Block.__(2, [
-            description,
             difficulty,
             next
           ]);
 }
 
-function attack(description, difficulty, next) {
+function attack(difficulty, next) {
   return /* Attack */Block.__(3, [
-            description,
             difficulty,
             next
           ]);
 }
 
-function rest(description, next) {
-  return /* Rest */Block.__(4, [
-            description,
-            next
-          ]);
+function rest(next) {
+  return /* Rest */Block.__(4, [next]);
 }
 
-function loot(description, rewards, next) {
+function loot(rewards, next) {
   return /* Loot */Block.__(5, [
-            description,
             rewards,
             next
           ]);
@@ -127,18 +119,16 @@ var r = /* :: */[
 ];
 
 var q1 = /* Loot */Block.__(5, [
-    "Found some jewels",
     r,
     /* End */0
   ]);
 
 var q2 = /* Defend */Block.__(2, [
-    "Defend the castle",
     0.5,
     /* End */0
   ]);
 
-var q_001 = /* :: */[
+var q_000 = /* :: */[
   /* DescribedQuest */[
     2.0,
     q1
@@ -153,39 +143,33 @@ var q_001 = /* :: */[
 ];
 
 var q = /* Branch */Block.__(0, [
-    "Choose which one",
-    q_001,
+    q_000,
     q2
   ]);
 
 var pipedQuest = /* Loot */Block.__(5, [
-    "Pipe the loot",
     r,
     /* End */0
   ]);
 
-var bracketQuest_002 = /* Loot */Block.__(5, [
-    "Bracket the loot",
+var bracketQuest_001 = /* Loot */Block.__(5, [
     r,
     /* End */0
   ]);
 
 var bracketQuest = /* Defend */Block.__(2, [
-    "Keep your fort",
     0.5,
-    bracketQuest_002
+    bracketQuest_001
   ]);
 
-var composedQuest_002 = /* Loot */Block.__(5, [
-    "Compose your loot",
+var composedQuest_001 = /* Loot */Block.__(5, [
     r,
     /* End */0
   ]);
 
 var composedQuest = /* Defend */Block.__(2, [
-    "Keep your house safe",
     0.5,
-    composedQuest_002
+    composedQuest_001
   ]);
 
 function dummyEncounter(param) {
