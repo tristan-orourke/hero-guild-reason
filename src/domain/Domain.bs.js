@@ -3,6 +3,8 @@
 
 var List = require("bs-platform/lib/js/list.js");
 var Block = require("bs-platform/lib/js/block.js");
+var Curry = require("bs-platform/lib/js/curry.js");
+var Stream = require("bs-platform/lib/js/stream.js");
 var Util$HeroGuild = require("../util/Util.bs.js");
 
 function getId(hero) {
@@ -172,6 +174,95 @@ var composedQuest = /* Defend */Block.__(2, [
     composedQuest_001
   ]);
 
+function basicEncounter(description) {
+  return /* record */[
+          /* description */description,
+          /* questActions : [] */0
+        ];
+}
+
+function runRec(party, questContext, pastEncounters, quest) {
+  var handleEncounter = function (description, next) {
+    var param = List.append(pastEncounters, /* :: */[
+          /* record */[
+            /* description */description,
+            /* questActions : [] */0
+          ],
+          /* [] */0
+        ]);
+    var param$1 = next;
+    return runRec(party, questContext, param, param$1);
+  };
+  if (typeof quest === "number") {
+    return pastEncounters;
+  } else {
+    switch (quest.tag | 0) {
+      case 0 : 
+          return handleEncounter("And then they branched, but chose the default route.", quest[1]);
+      case 1 : 
+          return handleEncounter("And then they travelled at a difficulty of " + quest[0].toString(), quest[1]);
+      case 2 : 
+          return handleEncounter("And then they defended at a difficulty of " + quest[0].toString(), quest[1]);
+      case 3 : 
+          return handleEncounter("And then they attacked at a difficulty of " + quest[0].toString(), quest[1]);
+      case 4 : 
+          return handleEncounter("And then they rested.", quest[0]);
+      case 5 : 
+          return handleEncounter("And then they looted.", quest[1]);
+      
+    }
+  }
+}
+
+function run(party, questContext, quest) {
+  return /* record */[
+          /* questContext */questContext,
+          /* encounters */runRec(party, questContext, /* [] */0, quest)
+        ];
+}
+
+var SimpleQuestRunner = /* module */[
+  /* basicEncounter */basicEncounter,
+  /* runRec */runRec,
+  /* run */run
+];
+
+var ConstRandom = Util$HeroGuild.Random(Util$HeroGuild.ConstGen);
+
+function make$1(seed) {
+  var context = /* record */[
+    /* title */"A new dummy Quest",
+    /* location : Forest */0,
+    /* questType : ClearMonsters */0,
+    /* seed */seed
+  ];
+  var floats = Curry._3(ConstRandom[/* randomFloatStream */3], 0.0, 1.0, seed);
+  var quest_000 = Stream.next(floats);
+  var quest_001 = /* Defend */Block.__(2, [
+      Stream.next(floats),
+      /* Attack */Block.__(3, [
+          Stream.next(floats),
+          /* Rest */Block.__(4, [/* Loot */Block.__(5, [
+                  /* [] */0,
+                  /* End */0
+                ])])
+        ])
+    ]);
+  var quest = /* Travel */Block.__(1, [
+      quest_000,
+      quest_001
+    ]);
+  return /* tuple */[
+          context,
+          quest
+        ];
+}
+
+var BasicQuestGenerator = /* module */[
+  /* ConstRandom */ConstRandom,
+  /* make */make$1
+];
+
 function dummyEncounter(param) {
   return /* record */[
           /* description */"Dummy Encounter,",
@@ -255,5 +346,7 @@ exports.q = q;
 exports.pipedQuest = pipedQuest;
 exports.bracketQuest = bracketQuest;
 exports.composedQuest = composedQuest;
+exports.SimpleQuestRunner = SimpleQuestRunner;
+exports.BasicQuestGenerator = BasicQuestGenerator;
 exports.Quest = Quest;
-/* No side effect */
+/* ConstRandom Not a pure module */

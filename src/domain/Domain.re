@@ -87,23 +87,122 @@ let pipedQuest = Quest'.(endQuest() |> loot(r));
 let bracketQuest = Quest'.(defend(0.5, loot(r, endQuest())));
 let composedQuest = Quest'.(defend(0.5) @@ loot(r) @@ endQuest());
 
-module Quest = {
-  type party = {
-    scout: Hero.t,
-    leader: Hero.t,
-    defence: Hero.t,
-    support: Hero.t,
+type party = {
+  scout: Hero.t,
+  leader: Hero.t,
+  defence: Hero.t,
+  support: Hero.t,
+};
+
+type location =
+  | Forest
+  | Ruin;
+type questType =
+  | ClearMonsters
+  | Guard;
+
+type questContext = {
+  title: string,
+  location,
+  questType,
+  seed: Util.ConstGen.t,
+};
+
+type questAction =
+  | GainGold(int);
+
+type encounterResult = {
+  description: string,
+  questActions: list(questAction),
+};
+
+type questHistory = {
+  questContext,
+  encounters: list(encounterResult),
+};
+
+module SimpleQuestRunner = {
+  let basicEncounter = description => {description, questActions: []};
+
+  let rec runRec =
+          (
+            ~party: party,
+            ~questContext: questContext,
+            ~pastEncounters: list(encounterResult),
+            ~quest: Quest'.t,
+          )
+          : list(encounterResult) => {
+    let runPartial = runRec(~party, ~questContext);
+    let handleEncounter = (description, next) =>
+      runPartial(
+        ~pastEncounters=
+          List.append(pastEncounters, [basicEncounter(description)]),
+        ~quest=next,
+      );
+    switch (quest) {
+    | Branch(_, next) =>
+      handleEncounter(
+        "And then they branched, but chose the default route.",
+        next,
+      )
+    | Travel(difficulty, next) =>
+      handleEncounter(
+        "And then they travelled at a difficulty of "
+        ++ Js.Float.toString(difficulty),
+        next,
+      )
+    | Defend(difficulty, next) =>
+      handleEncounter(
+        "And then they defended at a difficulty of "
+        ++ Js.Float.toString(difficulty),
+        next,
+      )
+    | Attack(difficulty, next) =>
+      handleEncounter(
+        "And then they attacked at a difficulty of "
+        ++ Js.Float.toString(difficulty),
+        next,
+      )
+    | Rest(next) => handleEncounter("And then they rested.", next)
+    | Loot(_, next) => handleEncounter("And then they looted.", next)
+    | End => pastEncounters
+    };
   };
 
+  let run = (~party, ~questContext, ~quest: Quest'.t): questHistory => {
+    questContext,
+    encounters: runRec(~party, ~questContext, ~pastEncounters=[], ~quest),
+  };
+};
+
+module BasicQuestGenerator = {
+  module ConstRandom = Util.Random(Util.ConstGen);
+  let make = (seed: Util.ConstGen.t): (questContext, Quest'.t) => {
+    let context = {
+      title: "A new dummy Quest",
+      location: Forest,
+      questType: ClearMonsters,
+      seed,
+    };
+    let floats = ConstRandom.randomFloatStream(~min=0.0, ~max=1.0, seed);
+    let quest =
+      Quest'.(
+        Stream.(
+          travel(next(floats)) @@
+          defend(next(floats)) @@
+          attack(next(floats)) @@
+          rest @@
+          loot([]) @@
+          endQuest()
+        )
+      );
+    (context, quest);
+  };
+};
+
+module Quest = {
   type questAction =
     | GainGold(int);
-
-  type location =
-    | Forest
-    | Ruin;
-  type questType =
-    | ClearMonsters
-    | Guard;
 
   type encounter = {
     description: string,
@@ -117,17 +216,17 @@ module Quest = {
     questActions: list(questAction),
   };
 
+  type questHistoryItem = {
+    encounter,
+    encounterResult,
+  };
+
   type quest = {
     id: string,
     description: string,
     challenge: float,
     location,
     questType,
-  };
-
-  type questHistoryItem = {
-    encounter,
-    encounterResult,
   };
 
   type questHistory = {

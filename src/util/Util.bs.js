@@ -15,6 +15,30 @@ function newId(prefix) {
 
 var Id = /* module */[/* newId */newId];
 
+function next(a) {
+  return /* tuple */[
+          a,
+          a
+        ];
+}
+
+function split(a) {
+  return /* tuple */[
+          a,
+          a
+        ];
+}
+
+function make(a) {
+  return a;
+}
+
+var ConstGen = /* module */[
+  /* next */next,
+  /* split */split,
+  /* make */make
+];
+
 function Random$1(funarg) {
   var randomInt = function (min, max, g) {
     var match = Curry._1(funarg[/* next */0], g);
@@ -61,5 +85,6 @@ function Random$1(funarg) {
 }
 
 exports.Id = Id;
+exports.ConstGen = ConstGen;
 exports.Random = Random$1;
 /* No side effect */

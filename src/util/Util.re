@@ -15,6 +15,14 @@ module type RandomGen = {
   type t;
   let next: t => (int, t);
   let split: t => (t, t);
+  let make: int => t;
+};
+
+module ConstGen: RandomGen = {
+  type t = int;
+  let next = a => (a, a);
+  let split = a => (a, a);
+  let make = (a: int): t => a;
 };
 
 module type RandomType =
