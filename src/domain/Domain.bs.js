@@ -2,6 +2,7 @@
 'use strict';
 
 var List = require("bs-platform/lib/js/list.js");
+var Block = require("bs-platform/lib/js/block.js");
 var Util$HeroGuild = require("../util/Util.bs.js");
 
 function getId(hero) {
@@ -24,9 +25,9 @@ function ofName(name) {
         ];
 }
 
-function make(name, skill) {
+function make(id, name, skill) {
   return /* record */[
-          /* id */Util$HeroGuild.Id[/* newId */0]("hero"),
+          /* id */id,
           /* name */name,
           /* skill */skill
         ];
@@ -38,6 +39,154 @@ var Hero = /* module */[
   /* ofName */ofName,
   /* make */make
 ];
+
+function makeWithValue(value) {
+  return value;
+}
+
+var QuestBranchDescription = /* module */[/* makeWithValue */makeWithValue];
+
+function gold(value) {
+  return /* Gold */[value];
+}
+
+var Reward = /* module */[/* gold */gold];
+
+function branch(description, $staropt$star, $$default) {
+  var options = $staropt$star !== undefined ? $staropt$star : /* [] */0;
+  return /* Branch */Block.__(0, [
+            description,
+            options,
+            $$default
+          ]);
+}
+
+function travel(description, difficulty, next) {
+  return /* Travel */Block.__(1, [
+            description,
+            difficulty,
+            next
+          ]);
+}
+
+function defend(description, difficulty, next) {
+  return /* Defend */Block.__(2, [
+            description,
+            difficulty,
+            next
+          ]);
+}
+
+function attack(description, difficulty, next) {
+  return /* Attack */Block.__(3, [
+            description,
+            difficulty,
+            next
+          ]);
+}
+
+function rest(description, next) {
+  return /* Rest */Block.__(4, [
+            description,
+            next
+          ]);
+}
+
+function loot(description, rewards, next) {
+  return /* Loot */Block.__(5, [
+            description,
+            rewards,
+            next
+          ]);
+}
+
+function endQuest(param) {
+  return /* End */0;
+}
+
+var Quest$prime = /* module */[
+  /* branch */branch,
+  /* travel */travel,
+  /* defend */defend,
+  /* attack */attack,
+  /* rest */rest,
+  /* loot */loot,
+  /* endQuest */endQuest
+];
+
+var r_000 = /* Gold */[5];
+
+var r_001 = /* :: */[
+  /* Gold */[10],
+  /* [] */0
+];
+
+var r = /* :: */[
+  r_000,
+  r_001
+];
+
+var q1 = /* Loot */Block.__(5, [
+    "Found some jewels",
+    r,
+    /* End */0
+  ]);
+
+var q2 = /* Defend */Block.__(2, [
+    "Defend the castle",
+    0.5,
+    /* End */0
+  ]);
+
+var q_001 = /* :: */[
+  /* DescribedQuest */[
+    2.0,
+    q1
+  ],
+  /* :: */[
+    /* DescribedQuest */[
+      0.5,
+      q2
+    ],
+    /* [] */0
+  ]
+];
+
+var q = /* Branch */Block.__(0, [
+    "Choose which one",
+    q_001,
+    q2
+  ]);
+
+var pipedQuest = /* Loot */Block.__(5, [
+    "Pipe the loot",
+    r,
+    /* End */0
+  ]);
+
+var bracketQuest_002 = /* Loot */Block.__(5, [
+    "Bracket the loot",
+    r,
+    /* End */0
+  ]);
+
+var bracketQuest = /* Defend */Block.__(2, [
+    "Keep your fort",
+    0.5,
+    bracketQuest_002
+  ]);
+
+var composedQuest_002 = /* Loot */Block.__(5, [
+    "Compose your loot",
+    r,
+    /* End */0
+  ]);
+
+var composedQuest = /* Defend */Block.__(2, [
+    "Keep your house safe",
+    0.5,
+    composedQuest_002
+  ]);
 
 function dummyEncounter(param) {
   return /* record */[
@@ -112,5 +261,15 @@ var Quest = /* module */[
 ];
 
 exports.Hero = Hero;
+exports.QuestBranchDescription = QuestBranchDescription;
+exports.Reward = Reward;
+exports.Quest$prime = Quest$prime;
+exports.r = r;
+exports.q1 = q1;
+exports.q2 = q2;
+exports.q = q;
+exports.pipedQuest = pipedQuest;
+exports.bracketQuest = bracketQuest;
+exports.composedQuest = composedQuest;
 exports.Quest = Quest;
 /* No side effect */

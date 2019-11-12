@@ -1,10 +1,26 @@
 [@react.component]
 let make = () => {
   let initialHeros: list(Domain.Hero.t) = [
-    Domain.Hero.make(~name="Johnny Appleseed", ~skill=0.2),
-    Domain.Hero.make(~name="Anny Dragonhear", ~skill=0.35),
-    Domain.Hero.make(~name="Bolton Spaltipur", ~skill=0.25),
-    Domain.Hero.make(~name="Araignia Temple", ~skill=0.30),
+    Domain.Hero.make(
+      ~id=Util.Id.newId("hero"),
+      ~name="Johnny Appleseed",
+      ~skill=0.2,
+    ),
+    Domain.Hero.make(
+      ~id=Util.Id.newId("hero"),
+      ~name="Anny Dragonhear",
+      ~skill=0.35,
+    ),
+    Domain.Hero.make(
+      ~id=Util.Id.newId("hero"),
+      ~name="Bolton Spaltipur",
+      ~skill=0.25,
+    ),
+    Domain.Hero.make(
+      ~id=Util.Id.newId("hero"),
+      ~name="Araignia Temple",
+      ~skill=0.30,
+    ),
   ];
 
   let (heroState, heroDispatch) =

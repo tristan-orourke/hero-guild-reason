@@ -8,7 +8,7 @@ module Hero: {
   let getId: t => Util.Id.t;
   let view: t => view;
   let ofName: string => t;
-  let make: (~name: string, ~skill: float) => t;
+  let make: (~id: Util.Id.t, ~name: string, ~skill: float) => t;
 } = {
   type t = {
     id: Util.Id.t,
@@ -26,9 +26,81 @@ module Hero: {
     name: hero.name,
     skill: hero.skill,
   };
+  /**TODO: remove impurity of newId. Maybe just take a string? */
   let ofName = (name): t => {id: Util.Id.newId("hero"), name, skill: 0.5};
-  let make = (~name, ~skill): t => {id: Util.Id.newId("hero"), name, skill};
+  let make = (~id, ~name, ~skill): t => {id, name, skill};
 };
+
+module QuestBranchDescription: {
+  type t;
+  let makeWithValue: float => t;
+} = {
+  type t = float;
+  let makeWithValue = value => value;
+};
+
+module Reward: {
+  type t;
+  let gold: int => t;
+} = {
+  type t =
+    | Gold(int);
+  let gold = value => Gold(value);
+};
+
+module Quest' = {
+  type difficulty = float;
+  type encounterDescription = string;
+  type t =
+    | Branch(encounterDescription, list(describedQuest), t)
+    | Travel(encounterDescription, difficulty, t)
+    | Defend(encounterDescription, difficulty, t)
+    | Attack(encounterDescription, difficulty, t)
+    | Rest(encounterDescription, t)
+    | Loot(encounterDescription, list(Reward.t), t)
+    | End
+  and describedQuest =
+    | DescribedQuest(QuestBranchDescription.t, t);
+
+  let branch = (description, ~options=[], default) =>
+    Branch(description, options, default);
+  let travel = (description, difficulty, next) =>
+    Travel(description, difficulty, next);
+  let defend = (description, difficulty, next) =>
+    Defend(description, difficulty, next);
+  let attack = (description, difficulty, next) =>
+    Attack(description, difficulty, next);
+  let rest = (description, next) => Rest(description, next);
+  let loot = (description, rewards, next) =>
+    Loot(description, rewards, next);
+  let endQuest = () => End;
+};
+
+let r = [Reward.gold(5), Reward.gold(10)];
+let q1 = Quest'.Loot("Found some jewels", r, Quest'.End);
+let q2 = Quest'.Defend("Defend the castle", 0.5, Quest'.End);
+
+let q =
+  Quest'.Branch(
+    "Choose which one",
+    [
+      Quest'.DescribedQuest(QuestBranchDescription.makeWithValue(2.0), q1),
+      Quest'.DescribedQuest(QuestBranchDescription.makeWithValue(0.5), q2),
+    ],
+    q2,
+  );
+
+let pipedQuest = Quest'.(endQuest() |> loot("Pipe the loot", r));
+let bracketQuest =
+  Quest'.(
+    defend("Keep your fort", 0.5, loot("Bracket the loot", r, endQuest()))
+  );
+let composedQuest =
+  Quest'.(
+    defend("Keep your house safe", 0.5) @@
+    loot("Compose your loot", r) @@
+    endQuest()
+  );
 
 module Quest = {
   type party = {

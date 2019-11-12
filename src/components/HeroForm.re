@@ -10,7 +10,8 @@ let make = (~submitHero: submitHero) => {
   let (skill, setSkill) = React.useState(() => 0.5);
 
   let submit = () => {
-    let hero: Domain.Hero.t = Domain.Hero.make(~name, ~skill);
+    let hero: Domain.Hero.t =
+      Domain.Hero.make(~id=Util.Id.newId("hero"), ~name, ~skill);
     submitHero(hero);
   };
 

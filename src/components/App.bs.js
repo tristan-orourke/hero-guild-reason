@@ -4,6 +4,7 @@
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
+var Util$HeroGuild = require("../util/Util.bs.js");
 var Domain$HeroGuild = require("../domain/Domain.bs.js");
 var QuestUi$HeroGuild = require("./QuestUi.bs.js");
 var AppState$HeroGuild = require("../domain/AppState.bs.js");
@@ -11,13 +12,13 @@ var HeroForm$HeroGuild = require("./HeroForm.bs.js");
 var GuildInfo$HeroGuild = require("./GuildInfo.bs.js");
 
 function App(Props) {
-  var initialHeros_000 = Domain$HeroGuild.Hero[/* make */3]("Johnny Appleseed", 0.2);
+  var initialHeros_000 = Domain$HeroGuild.Hero[/* make */3](Util$HeroGuild.Id[/* newId */0]("hero"), "Johnny Appleseed", 0.2);
   var initialHeros_001 = /* :: */[
-    Domain$HeroGuild.Hero[/* make */3]("Anny Dragonhear", 0.35),
+    Domain$HeroGuild.Hero[/* make */3](Util$HeroGuild.Id[/* newId */0]("hero"), "Anny Dragonhear", 0.35),
     /* :: */[
-      Domain$HeroGuild.Hero[/* make */3]("Bolton Spaltipur", 0.25),
+      Domain$HeroGuild.Hero[/* make */3](Util$HeroGuild.Id[/* newId */0]("hero"), "Bolton Spaltipur", 0.25),
       /* :: */[
-        Domain$HeroGuild.Hero[/* make */3]("Araignia Temple", 0.30),
+        Domain$HeroGuild.Hero[/* make */3](Util$HeroGuild.Id[/* newId */0]("hero"), "Araignia Temple", 0.30),
         /* [] */0
       ]
     ]
