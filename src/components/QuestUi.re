@@ -3,12 +3,12 @@ open Domain;
 module QuestInfoCard = {
   [@react.component]
   let make = (~quest: Quest.quest) => {
-    let locationString = (location: Quest.location): string =>
+    let locationString = (location: location): string =>
       switch (location) {
       | Forest => "Forest"
       | Ruin => "Ruin"
       };
-    let questTypeString = (questType: Quest.questType): string =>
+    let questTypeString = (questType: questType): string =>
       switch (questType) {
       | ClearMonsters => "Clear Monsters"
       | Guard => "Guard"
@@ -33,12 +33,11 @@ module QuestResolver = {
       (
         ~quest: Quest.quest,
         ~heroes: list(Hero.t),
-        ~handleResolveQuest:
-           (~quest: Quest.quest, ~party: Quest.party) => unit,
+        ~handleResolveQuest: (~quest: Quest.quest, ~party: party) => unit,
       ) => {
     let (showParty, setShowParty) = React.useState(() => false);
 
-    let submitParty = party => handleResolveQuest(quest, party);
+    let submitParty = party => handleResolveQuest(~quest, ~party);
 
     <div>
       <button
@@ -69,7 +68,7 @@ module SetupQuest = {
       (
         ~quest: Quest.quest,
         ~heroes: list(Hero.t),
-        ~startQuest: (~quest: Quest.quest, ~party: Quest.party) => unit,
+        ~startQuest: (~quest: Quest.quest, ~party: Domain.party) => unit,
       ) => {
     <div className="block">
       <QuestInfoCard quest />
@@ -85,7 +84,7 @@ let make =
       ~completedQuests: list(Quest.questHistory),
       ~heroes: list(Hero.t),
       ~handleAddQuest: Quest.quest => unit,
-      ~handleResolveQuest: (~quest: Quest.quest, ~party: Quest.party) => unit,
+      ~handleResolveQuest: (~quest: Quest.quest, ~party: Domain.party) => unit,
     ) => {
   let generateQuest = (): Quest.quest => {
     id: Uuid.questId(),

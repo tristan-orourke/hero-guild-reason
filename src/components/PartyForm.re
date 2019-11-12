@@ -51,7 +51,7 @@ module HeroSelector = {
 };
 
 [@react.component]
-let make = (~heroes: list(Hero.t), ~submitParty: Quest.party => unit) => {
+let make = (~heroes: list(Hero.t), ~submitParty: Domain.party => unit) => {
   /* States for each party position */
   let (scout: option(Hero.t), setScout) =
     React.useState(() => (None: option(Hero.t)));

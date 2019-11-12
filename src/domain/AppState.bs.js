@@ -57,4 +57,4 @@ var QuestState = /* module */[
 
 exports.HeroState = HeroState;
 exports.QuestState = QuestState;
-/* No side effect */
+/* Domain-HeroGuild Not a pure module */

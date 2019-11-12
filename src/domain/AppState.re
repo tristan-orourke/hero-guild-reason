@@ -22,7 +22,7 @@ module QuestState = {
 
   type questAction =
     | AddQuest(Quest.quest)
-    | ResolveQuest(Quest.quest, Quest.party);
+    | ResolveQuest(Quest.quest, Domain.party);
 
   let initQuest = (): questState => {pendingQuests: [], completedQuests: []};
 
