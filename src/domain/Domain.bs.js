@@ -98,7 +98,7 @@ function endQuest(param) {
   return /* End */0;
 }
 
-var Quest$prime = /* module */[
+var Quest = /* module */[
   /* branch */branch,
   /* travel */travel,
   /* defend */defend,
@@ -181,17 +181,15 @@ function basicEncounter(description) {
         ];
 }
 
-function runRec(party, questContext, pastEncounters, quest) {
+function runRec(party, pastEncounters, quest) {
   var handleEncounter = function (description, next) {
-    var param = List.append(pastEncounters, /* :: */[
-          /* record */[
-            /* description */description,
-            /* questActions : [] */0
-          ],
-          /* [] */0
-        ]);
-    var param$1 = next;
-    return runRec(party, questContext, param, param$1);
+    return runRec(party, List.append(pastEncounters, /* :: */[
+                    /* record */[
+                      /* description */description,
+                      /* questActions : [] */0
+                    ],
+                    /* [] */0
+                  ]), next);
   };
   if (typeof quest === "number") {
     return pastEncounters;
@@ -214,10 +212,10 @@ function runRec(party, questContext, pastEncounters, quest) {
   }
 }
 
-function run(party, questContext, quest) {
+function run(party, questContext) {
   return /* record */[
           /* questContext */questContext,
-          /* encounters */runRec(party, questContext, /* [] */0, quest)
+          /* encounters */runRec(party, /* [] */0, questContext[/* quest */5])
         ];
 }
 
@@ -229,13 +227,7 @@ var SimpleQuestRunner = /* module */[
 
 var ConstRandom = Util$HeroGuild.Random(Util$HeroGuild.ConstGen);
 
-function make$1(seed) {
-  var context = /* record */[
-    /* title */"A new dummy Quest",
-    /* location : Forest */0,
-    /* questType : ClearMonsters */0,
-    /* seed */seed
-  ];
+function make$1(seed, id) {
   var floats = Curry._3(ConstRandom[/* randomFloatStream */3], 0.0, 1.0, seed);
   var quest_000 = Stream.next(floats);
   var quest_001 = /* Defend */Block.__(2, [
@@ -252,9 +244,13 @@ function make$1(seed) {
       quest_000,
       quest_001
     ]);
-  return /* tuple */[
-          context,
-          quest
+  return /* record */[
+          /* id */id,
+          /* title */"A new dummy Quest with id = " + id,
+          /* location : Forest */0,
+          /* questType : ClearMonsters */0,
+          /* seed */seed,
+          /* quest */quest
         ];
 }
 
@@ -263,82 +259,10 @@ var BasicQuestGenerator = /* module */[
   /* make */make$1
 ];
 
-function dummyEncounter(param) {
-  return /* record */[
-          /* description */"Dummy Encounter,",
-          /* scoutChallenge */0.0,
-          /* leaderChallenge */0.0,
-          /* defenceChallenge */0.0,
-          /* supportChallenge */0.0
-        ];
-}
-
-function generateNextEncounter(questHistory) {
-  if (List.length(questHistory[/* history */2]) > 5) {
-    return undefined;
-  } else {
-    return /* record */[
-            /* description */"Dummy Encounter,",
-            /* scoutChallenge */0.0,
-            /* leaderChallenge */0.0,
-            /* defenceChallenge */0.0,
-            /* supportChallenge */0.0
-          ];
-  }
-}
-
-function resolveEncounter(party, encounter) {
-  return /* record */[
-          /* description */"Dummy Result",
-          /* questActions : [] */0
-        ];
-}
-
-function resolveQuest(party, quest) {
-  var questComplete = false;
-  var encounterHistory = /* [] */0;
-  while(!questComplete) {
-    var questHistory = /* record */[
-      /* party */party,
-      /* quest */quest,
-      /* history */encounterHistory
-    ];
-    var nextEncounter = generateNextEncounter(questHistory);
-    if (nextEncounter !== undefined) {
-      var newEncounterHistory_000 = /* record */[
-        /* encounter */nextEncounter,
-        /* encounterResult : record */[
-          /* description */"Dummy Result",
-          /* questActions : [] */0
-        ]
-      ];
-      var newEncounterHistory = /* :: */[
-        newEncounterHistory_000,
-        encounterHistory
-      ];
-      encounterHistory = newEncounterHistory;
-    } else {
-      questComplete = true;
-    }
-  };
-  return /* record */[
-          /* party */party,
-          /* quest */quest,
-          /* history */encounterHistory
-        ];
-}
-
-var Quest = /* module */[
-  /* dummyEncounter */dummyEncounter,
-  /* generateNextEncounter */generateNextEncounter,
-  /* resolveEncounter */resolveEncounter,
-  /* resolveQuest */resolveQuest
-];
-
 exports.Hero = Hero;
 exports.QuestBranchDescription = QuestBranchDescription;
 exports.Reward = Reward;
-exports.Quest$prime = Quest$prime;
+exports.Quest = Quest;
 exports.r = r;
 exports.q1 = q1;
 exports.q2 = q2;
@@ -348,5 +272,4 @@ exports.bracketQuest = bracketQuest;
 exports.composedQuest = composedQuest;
 exports.SimpleQuestRunner = SimpleQuestRunner;
 exports.BasicQuestGenerator = BasicQuestGenerator;
-exports.Quest = Quest;
 /* ConstRandom Not a pure module */

@@ -5,18 +5,19 @@ var List = require("bs-platform/lib/js/list.js");
 var $$Array = require("bs-platform/lib/js/array.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
-var Uuid$HeroGuild = require("../Uuid.bs.js");
+var Util$HeroGuild = require("../util/Util.bs.js");
+var Domain$HeroGuild = require("../domain/Domain.bs.js");
 var Styles$HeroGuild = require("../Styles.bs.js");
 var PartyForm$HeroGuild = require("./PartyForm.bs.js");
 
 function QuestUi$QuestInfoCard(Props) {
-  var quest = Props.quest;
+  var context = Props.context;
   return React.createElement("div", {
               className: "max-w-xs rounded overflow-hidden shadow-lg p-2 m-2"
-            }, React.createElement("p", undefined, "Description: " + quest[/* description */1]), React.createElement("p", undefined, "Challenge: " + quest[/* challenge */2].toString()), React.createElement("p", undefined, "Location: " + (
-                  quest[/* location */3] ? "Ruin" : "Forest"
+            }, React.createElement("p", undefined, "Description: " + context[/* title */1]), React.createElement("p", undefined, "Location: " + (
+                  context[/* location */2] ? "Ruin" : "Forest"
                 )), React.createElement("p", undefined, "Quest Type: " + (
-                  quest[/* questType */4] ? "Guard" : "Clear Monsters"
+                  context[/* questType */3] ? "Guard" : "Clear Monsters"
                 )));
 }
 
@@ -54,19 +55,20 @@ function QuestUi$QuestOutcomeCard(Props) {
   var questHistory = Props.questHistory;
   return React.createElement("div", {
               className: "rounded overflow-hidden shadow-lg p-2 m-2"
-            }, React.createElement("p", undefined, "Quest complete: " + questHistory[/* quest */1][/* description */1]));
+            }, React.createElement("p", undefined, "Quest complete: " + questHistory[/* questContext */0][/* title */1]));
 }
 
 var QuestOutcomeCard = /* module */[/* make */QuestUi$QuestOutcomeCard];
 
 function QuestUi$SetupQuest(Props) {
   var quest = Props.quest;
+  var questContext = Props.questContext;
   var heroes = Props.heroes;
   var startQuest = Props.startQuest;
   return React.createElement("div", {
               className: "block"
             }, React.createElement(QuestUi$QuestInfoCard, {
-                  quest: quest
+                  context: questContext
                 }), React.createElement(PartyForm$HeroGuild.make, {
                   heroes: heroes,
                   submitParty: (function (party) {
@@ -84,21 +86,15 @@ function QuestUi(Props) {
   var handleAddQuest = Props.handleAddQuest;
   var handleResolveQuest = Props.handleResolveQuest;
   var generateQuest = function (param) {
-    return /* record */[
-            /* id */Uuid$HeroGuild.questId(/* () */0),
-            /* description */"Another Dummy Quest #" + String(Uuid$HeroGuild.lastId[0]),
-            /* challenge */0.5,
-            /* location : Forest */0,
-            /* questType : ClearMonsters */0
-          ];
+    return Domain$HeroGuild.BasicQuestGenerator[/* make */1](Util$HeroGuild.ConstGen[/* make */2](1), Util$HeroGuild.Id[/* newId */0]("quest"));
   };
-  var questCards = $$Array.of_list(List.map((function (quest) {
+  var questCards = $$Array.of_list(List.map((function (questContext) {
               return React.createElement("div", {
-                          key: quest[/* id */0]
+                          key: questContext[/* id */0]
                         }, React.createElement(QuestUi$QuestInfoCard, {
-                              quest: quest
+                              context: questContext
                             }), React.createElement(QuestUi$QuestResolver, {
-                              quest: quest,
+                              quest: questContext,
                               heroes: heroes,
                               handleResolveQuest: handleResolveQuest
                             }));
@@ -106,7 +102,7 @@ function QuestUi(Props) {
   var questOutcomeCards = $$Array.of_list(List.map((function (questHistory) {
               return React.createElement(QuestUi$QuestOutcomeCard, {
                           questHistory: questHistory,
-                          key: questHistory[/* quest */1][/* id */0]
+                          key: questHistory[/* questContext */0][/* id */0]
                         });
             }), completedQuests));
   return React.createElement("div", {

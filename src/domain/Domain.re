@@ -48,7 +48,7 @@ module Reward: {
   let gold = value => Gold(value);
 };
 
-module Quest' = {
+module Quest = {
   type difficulty = float;
   type t =
     | Branch(list(describedQuest), t)
@@ -71,21 +71,21 @@ module Quest' = {
 };
 
 let r = [Reward.gold(5), Reward.gold(10)];
-let q1 = Quest'.Loot(r, Quest'.End);
-let q2 = Quest'.Defend(0.5, Quest'.End);
+let q1 = Quest.Loot(r, Quest.End);
+let q2 = Quest.Defend(0.5, Quest.End);
 
 let q =
-  Quest'.Branch(
+  Quest.Branch(
     [
-      Quest'.DescribedQuest(QuestBranchDescription.makeWithValue(2.0), q1),
-      Quest'.DescribedQuest(QuestBranchDescription.makeWithValue(0.5), q2),
+      Quest.DescribedQuest(QuestBranchDescription.makeWithValue(2.0), q1),
+      Quest.DescribedQuest(QuestBranchDescription.makeWithValue(0.5), q2),
     ],
     q2,
   );
 
-let pipedQuest = Quest'.(endQuest() |> loot(r));
-let bracketQuest = Quest'.(defend(0.5, loot(r, endQuest())));
-let composedQuest = Quest'.(defend(0.5) @@ loot(r) @@ endQuest());
+let pipedQuest = Quest.(endQuest() |> loot(r));
+let bracketQuest = Quest.(defend(0.5, loot(r, endQuest())));
+let composedQuest = Quest.(defend(0.5) @@ loot(r) @@ endQuest());
 
 type party = {
   scout: Hero.t,
@@ -102,10 +102,12 @@ type questType =
   | Guard;
 
 type questContext = {
+  id: Util.Id.t,
   title: string,
   location,
   questType,
   seed: Util.ConstGen.t,
+  quest: Quest.t,
 };
 
 type questAction =
@@ -127,12 +129,11 @@ module SimpleQuestRunner = {
   let rec runRec =
           (
             ~party: party,
-            ~questContext: questContext,
             ~pastEncounters: list(encounterResult),
-            ~quest: Quest'.t,
+            ~quest: Quest.t,
           )
           : list(encounterResult) => {
-    let runPartial = runRec(~party, ~questContext);
+    let runPartial = runRec(~party);
     let handleEncounter = (description, next) =>
       runPartial(
         ~pastEncounters=
@@ -169,24 +170,18 @@ module SimpleQuestRunner = {
     };
   };
 
-  let run = (~party, ~questContext, ~quest: Quest'.t): questHistory => {
+  let run = (~party, ~questContext): questHistory => {
     questContext,
-    encounters: runRec(~party, ~questContext, ~pastEncounters=[], ~quest),
+    encounters: runRec(~party, ~pastEncounters=[], ~quest=questContext.quest),
   };
 };
 
 module BasicQuestGenerator = {
   module ConstRandom = Util.Random(Util.ConstGen);
-  let make = (seed: Util.ConstGen.t): (questContext, Quest'.t) => {
-    let context = {
-      title: "A new dummy Quest",
-      location: Forest,
-      questType: ClearMonsters,
-      seed,
-    };
+  let make = (~seed: Util.ConstGen.t, ~id: Util.Id.t): questContext => {
     let floats = ConstRandom.randomFloatStream(~min=0.0, ~max=1.0, seed);
     let quest =
-      Quest'.(
+      Quest.(
         Stream.(
           travel(next(floats)) @@
           defend(next(floats)) @@
@@ -196,92 +191,13 @@ module BasicQuestGenerator = {
           endQuest()
         )
       );
-    (context, quest);
-  };
-};
-
-module Quest = {
-  type questAction =
-    | GainGold(int);
-
-  type encounter = {
-    description: string,
-    scoutChallenge: float,
-    leaderChallenge: float,
-    defenceChallenge: float,
-    supportChallenge: float,
-  }
-  and encounterResult = {
-    description: string,
-    questActions: list(questAction),
-  };
-
-  type questHistoryItem = {
-    encounter,
-    encounterResult,
-  };
-
-  type quest = {
-    id: string,
-    description: string,
-    challenge: float,
-    location,
-    questType,
-  };
-
-  type questHistory = {
-    party,
-    quest,
-    history: list(questHistoryItem),
-  };
-
-  let dummyEncounter = (): encounter => {
-    description: "Dummy Encounter,",
-    scoutChallenge: 0.0,
-    leaderChallenge: 0.0,
-    defenceChallenge: 0.0,
-    supportChallenge: 0.0,
-  };
-  let generateNextEncounter = (questHistory: questHistory): option(encounter) =>
-    if (List.length(questHistory.history) > 5) {
-      None;
-    } else {
-      Some(dummyEncounter());
+    {
+      id,
+      title: "A new dummy Quest with id = " ++ id,
+      location: Forest,
+      questType: ClearMonsters,
+      seed,
+      quest,
     };
-
-  let resolveEncounter = (party: party, encounter: encounter): encounterResult => {
-    description: "Dummy Result",
-    questActions: [],
   };
-
-  let resolveQuest = (~party, ~quest): questHistory => {
-    // let rand = SeededRandom.seedRand(1); //TODO: get rand from quest or encounter
-    let questComplete = ref(false);
-    let encounterHistory: ref(list(questHistoryItem)) = ref([]);
-    while (! questComplete^) {
-      let questHistory: questHistory = {
-        party,
-        quest,
-        history: encounterHistory^,
-      };
-      let nextEncounter = generateNextEncounter(questHistory);
-      switch (nextEncounter) {
-      | Some(encounter) =>
-        let resolution = resolveEncounter(party, encounter);
-        let newEncounterHistory = [
-          {encounter, encounterResult: resolution},
-          ...encounterHistory^,
-        ];
-        encounterHistory := newEncounterHistory;
-      | None => questComplete := true
-      };
-    };
-    {party, quest, history: encounterHistory^};
-  } /*   */;
-  // let generateQuestEncounter = (rand: rand, quest): encounter => {
-  //   switch(quest.questType, quest.location) {
-  //     | (ClearMonsters, Forest) => ;
-  //     | (ClearMonsters, Ruin) => ;
-  //     | (Guard, Forest) => ;
-  //     | (Guard, Ruin) => ;
 };
