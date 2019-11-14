@@ -4,45 +4,30 @@
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
+var Util$HeroGuild = require("../util/Util.bs.js");
+var Domain$HeroGuild = require("../domain/Domain.bs.js");
 var QuestUi$HeroGuild = require("./QuestUi.bs.js");
-var AppState$HeroGuild = require("../AppState.bs.js");
+var AppState$HeroGuild = require("../domain/AppState.bs.js");
 var HeroForm$HeroGuild = require("./HeroForm.bs.js");
 var GuildInfo$HeroGuild = require("./GuildInfo.bs.js");
 
 function App(Props) {
-  var match = React.useReducer(AppState$HeroGuild.HeroState[/* heroReducer */1], /* record */[/* heroes : :: */[
-          /* record */[
-            /* id */"hero:-1",
-            /* name */"Johnny Appleseed",
-            /* skill */0.2,
-            /* relationships : [] */0
-          ],
-          /* :: */[
-            /* record */[
-              /* id */"hero:-2",
-              /* name */"Anny Dragonhear",
-              /* skill */0.35,
-              /* relationships : [] */0
-            ],
-            /* :: */[
-              /* record */[
-                /* id */"hero:-3",
-                /* name */"Bolton Spaltipur",
-                /* skill */0.25,
-                /* relationships : [] */0
-              ],
-              /* :: */[
-                /* record */[
-                  /* id */"hero:-4",
-                  /* name */"Araignia Temple",
-                  /* skill */0.30,
-                  /* relationships : [] */0
-                ],
-                /* [] */0
-              ]
-            ]
-          ]
-        ]]);
+  var initialHeros_000 = Domain$HeroGuild.Hero[/* make */3](Util$HeroGuild.Id[/* newId */0]("hero"), "Johnny Appleseed", 0.2);
+  var initialHeros_001 = /* :: */[
+    Domain$HeroGuild.Hero[/* make */3](Util$HeroGuild.Id[/* newId */0]("hero"), "Anny Dragonhear", 0.35),
+    /* :: */[
+      Domain$HeroGuild.Hero[/* make */3](Util$HeroGuild.Id[/* newId */0]("hero"), "Bolton Spaltipur", 0.25),
+      /* :: */[
+        Domain$HeroGuild.Hero[/* make */3](Util$HeroGuild.Id[/* newId */0]("hero"), "Araignia Temple", 0.30),
+        /* [] */0
+      ]
+    ]
+  ];
+  var initialHeros = /* :: */[
+    initialHeros_000,
+    initialHeros_001
+  ];
+  var match = React.useReducer(AppState$HeroGuild.HeroState[/* heroReducer */1], /* record */[/* heroes */initialHeros]);
   var heroDispatch = match[1];
   var heroState = match[0];
   var submitHero = function (hero) {

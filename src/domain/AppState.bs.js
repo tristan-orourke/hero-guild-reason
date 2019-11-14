@@ -2,7 +2,7 @@
 'use strict';
 
 var List = require("bs-platform/lib/js/list.js");
-var Quest$HeroGuild = require("./Quest.bs.js");
+var Domain$HeroGuild = require("./Domain.bs.js");
 
 function initHero(param) {
   return /* record */[/* heroes : [] */0];
@@ -29,13 +29,13 @@ function initQuest(param) {
 
 function questReducer(state, action) {
   if (action.tag) {
-    var quest = action[0];
+    var questContext = action[0];
     return /* record */[
             /* pendingQuests */List.filter((function (item) {
-                      return item[/* id */0] !== quest[/* id */0];
+                      return item[/* id */0] !== questContext[/* id */0];
                     }))(state[/* pendingQuests */0]),
             /* completedQuests : :: */[
-              Quest$HeroGuild.resolveQuest(action[1], quest),
+              Domain$HeroGuild.SimpleQuestRunner[/* run */2](action[1], questContext),
               state[/* completedQuests */1]
             ]
           ];
@@ -57,4 +57,4 @@ var QuestState = /* module */[
 
 exports.HeroState = HeroState;
 exports.QuestState = QuestState;
-/* No side effect */
+/* Domain-HeroGuild Not a pure module */

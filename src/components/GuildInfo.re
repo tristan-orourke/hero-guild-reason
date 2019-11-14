@@ -1,17 +1,19 @@
 module HeroCard = {
   [@react.component]
-  let make = (~hero: Hero.hero) => {
+  let make = (~hero: Domain.Hero.t) => {
+    let view = Domain.Hero.view(hero);
+
     <div className="max-w-xs rounded overflow-hidden shadow-lg p-2 m-2">
-      <p> {React.string("Name: " ++ hero.name)} </p>
-      <p> {React.string("Skill: " ++ Js.Float.toString(hero.skill))} </p>
+      <p> {React.string("Name: " ++ view.name)} </p>
+      <p> {React.string("Skill: " ++ Js.Float.toString(view.skill))} </p>
     </div>;
   };
 };
 
 [@react.component]
-let make = (~heroes: list(Hero.hero)) => {
+let make = (~heroes: list(Domain.Hero.t)) => {
   let heroCards =
-    List.map(hero => <HeroCard hero key={hero.id} />, heroes)
+    List.map(hero => <HeroCard hero key={Domain.Hero.getId(hero)} />, heroes)
     ->Array.of_list
     ->React.array;
   // {

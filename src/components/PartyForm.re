@@ -1,10 +1,12 @@
+open Domain;
+
 module HeroSelector = {
   [@react.component]
   let make =
       (
         ~position: string,
-        ~selectedHero: option(Hero.hero),
-        ~heroOptions: list(Hero.hero),
+        ~selectedHero: option(Hero.t),
+        ~heroOptions: list(Hero.t),
         ~handleChange,
       ) => {
     <div className="inline-block relative m-2">
@@ -15,21 +17,22 @@ module HeroSelector = {
           name=position
           value={
             switch (selectedHero) {
-            | Some(hero) => hero.id
+            | Some(hero) => Hero.getId(hero)
             | None => ""
             }
           }
           onChange=handleChange>
           <option value=""> {React.string("fill position")} </option>
-          {List.map(
-             (hero: Hero.hero): React.element =>
-               <option value={hero.id} key={hero.id}>
-                 {React.string(hero.name)}
-               </option>,
-             heroOptions,
-           )
-           ->Array.of_list
-           ->React.array}
+          {List.map(Hero.view, heroOptions)
+           |> List.map((hero: Hero.view) =>
+                (
+                  <option value={hero.id} key={hero.id}>
+                    {React.string(hero.name)}
+                  </option>: React.element
+                )
+              )
+           |> Array.of_list
+           |> React.array}
         </select>
       </label>
       <div
@@ -48,35 +51,35 @@ module HeroSelector = {
 };
 
 [@react.component]
-let make = (~heroes: list(Hero.hero), ~submitParty: Quest.party => unit) => {
+let make = (~heroes: list(Hero.t), ~submitParty: Domain.party => unit) => {
   /* States for each party position */
-  let (scout: option(Hero.hero), setScout) =
-    React.useState(() => (None: option(Hero.hero)));
-  let (leader: option(Hero.hero), setLeader) =
-    React.useState(() => (None: option(Hero.hero)));
-  let (defence: option(Hero.hero), setDefence) =
-    React.useState(() => (None: option(Hero.hero)));
-  let (support: option(Hero.hero), setSupport) =
-    React.useState(() => (None: option(Hero.hero)));
+  let (scout: option(Hero.t), setScout) =
+    React.useState(() => (None: option(Hero.t)));
+  let (leader: option(Hero.t), setLeader) =
+    React.useState(() => (None: option(Hero.t)));
+  let (defence: option(Hero.t), setDefence) =
+    React.useState(() => (None: option(Hero.t)));
+  let (support: option(Hero.t), setSupport) =
+    React.useState(() => (None: option(Hero.t)));
 
   let handleChange = (heroSetter, event) => {
     let selectedId = ReactEvent.Form.target(event)##value;
     if (selectedId === "") {
       heroSetter(_ => None);
     } else {
-      let hasId = (id, item: Hero.hero) => item.id === id;
+      let hasId = (id, item: Hero.t) => Hero.getId(item) === id;
       let selectedHero = List.find(hasId(selectedId), heroes);
       heroSetter(_ => Some(selectedHero));
     };
   };
 
-  let selectedHeros = (): list(Hero.hero) =>
+  let selectedHeros = (): list(Hero.t) =>
     Belt.List.keepMap([scout, leader, defence, support], hero => hero);
-  let isAlreadySelected = (hero: Hero.hero) =>
+  let isAlreadySelected = (hero: Hero.t) =>
     List.exists(h => h === hero, selectedHeros());
 
-  let availableOptions = (~forceAllow: option(Hero.hero)): list(Hero.hero) => {
-    let heroFilter: Hero.hero => bool =
+  let availableOptions = (~forceAllow: option(Hero.t)): list(Hero.t) => {
+    let heroFilter: Hero.t => bool =
       switch (forceAllow) {
       | Some(forceHero) => (
           hero => hero === forceHero || !isAlreadySelected(hero)

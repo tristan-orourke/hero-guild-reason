@@ -1,25 +1,29 @@
+open Domain;
+
 module QuestInfoCard = {
   [@react.component]
-  let make = (~quest: Quest.quest) => {
-    let locationString = (location: Quest.location): string =>
+  let make = (~context: Domain.questContext) => {
+    let locationString = (location: location): string =>
       switch (location) {
       | Forest => "Forest"
       | Ruin => "Ruin"
       };
-    let questTypeString = (questType: Quest.questType): string =>
+    let questTypeString = (questType: questType): string =>
       switch (questType) {
       | ClearMonsters => "Clear Monsters"
       | Guard => "Guard"
       };
 
     <div className="max-w-xs rounded overflow-hidden shadow-lg p-2 m-2">
-      <p> {React.string("Description: " ++ quest.description)} </p>
+      <p> {React.string("Description: " ++ context.title)} </p>
+      // <p>
+      //   {React.string("Challenge: " ++ Js.Float.toString(context.difficulty))}
+      // </p>
       <p>
-        {React.string("Challenge: " ++ Js.Float.toString(quest.challenge))}
+        {React.string("Location: " ++ locationString(context.location))}
       </p>
-      <p> {React.string("Location: " ++ locationString(quest.location))} </p>
       <p>
-        {React.string("Quest Type: " ++ questTypeString(quest.questType))}
+        {React.string("Quest Type: " ++ questTypeString(context.questType))}
       </p>
     </div>;
   };
@@ -29,14 +33,14 @@ module QuestResolver = {
   [@react.component]
   let make =
       (
-        ~quest: Quest.quest,
-        ~heroes: list(Hero.hero),
+        ~quest: Domain.questContext,
+        ~heroes: list(Hero.t),
         ~handleResolveQuest:
-           (~quest: Quest.quest, ~party: Quest.party) => unit,
+           (~quest: Domain.questContext, ~party: party) => unit,
       ) => {
     let (showParty, setShowParty) = React.useState(() => false);
 
-    let submitParty = party => handleResolveQuest(quest, party);
+    let submitParty = party => handleResolveQuest(~quest, ~party);
 
     <div>
       <button
@@ -52,10 +56,10 @@ module QuestResolver = {
 
 module QuestOutcomeCard = {
   [@react.component]
-  let make = (~questHistory: Quest.questHistory) => {
+  let make = (~questHistory: Domain.questHistory) => {
     <div className="rounded overflow-hidden shadow-lg p-2 m-2">
       <p>
-        {React.string("Quest complete: " ++ questHistory.quest.description)}
+        {React.string("Quest complete: " ++ questHistory.questContext.title)}
       </p>
     </div>;
   };
@@ -65,12 +69,13 @@ module SetupQuest = {
   [@react.component]
   let make =
       (
-        ~quest: Quest.quest,
-        ~heroes: list(Hero.hero),
-        ~startQuest: (~quest: Quest.quest, ~party: Quest.party) => unit,
+        ~quest: Quest.t,
+        ~questContext: Domain.questContext,
+        ~heroes: list(Hero.t),
+        ~startQuest: (~quest: Quest.t, ~party: Domain.party) => unit,
       ) => {
     <div className="block">
-      <QuestInfoCard quest />
+      <QuestInfoCard context=questContext />
       <PartyForm heroes submitParty={party => startQuest(~quest, ~party)} />
     </div>;
   };
@@ -79,26 +84,25 @@ module SetupQuest = {
 [@react.component]
 let make =
     (
-      ~pendingQuests: list(Quest.quest),
-      ~completedQuests: list(Quest.questHistory),
-      ~heroes: list(Hero.hero),
-      ~handleAddQuest: Quest.quest => unit,
-      ~handleResolveQuest: (~quest: Quest.quest, ~party: Quest.party) => unit,
+      ~pendingQuests: list(Domain.questContext),
+      ~completedQuests: list(Domain.questHistory),
+      ~heroes: list(Hero.t),
+      ~handleAddQuest: Domain.questContext => unit,
+      ~handleResolveQuest:
+         (~quest: Domain.questContext, ~party: Domain.party) => unit,
     ) => {
-  let generateQuest = (): Quest.quest => {
-    id: Uuid.questId(),
-    description: "Another Dummy Quest #" ++ string_of_int(Uuid.lastId^),
-    challenge: 0.5,
-    location: Forest,
-    questType: ClearMonsters,
-  };
+  let generateQuest = (): Domain.questContext =>
+    Domain.BasicQuestGenerator.make(
+      ~seed=Util.ConstGen.make(1),
+      ~id=Util.Id.newId("quest"),
+    );
 
   let questCards =
     List.map(
-      (quest: Quest.quest) =>
-        <div key={quest.id}>
-          <QuestInfoCard quest />
-          <QuestResolver quest heroes handleResolveQuest />
+      (questContext: Domain.questContext) =>
+        <div key={questContext.id}>
+          <QuestInfoCard context=questContext />
+          <QuestResolver quest=questContext heroes handleResolveQuest />
         </div>,
       pendingQuests,
     )
@@ -108,7 +112,7 @@ let make =
   let questOutcomeCards =
     List.map(
       questHistory =>
-        <QuestOutcomeCard questHistory key={questHistory.quest.id} />,
+        <QuestOutcomeCard questHistory key={questHistory.questContext.id} />,
       completedQuests,
     )
     ->Array.of_list
