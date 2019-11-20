@@ -53,9 +53,16 @@ var QuestResolver = /* module */[/* make */QuestUi$QuestResolver];
 
 function QuestUi$QuestOutcomeCard(Props) {
   var questHistory = Props.questHistory;
+  var questDescriptions = $$Array.of_list(List.mapi((function (index, description) {
+              return React.createElement("p", {
+                          key: String(index)
+                        }, description);
+            }), List.map((function (encounter) {
+                  return encounter[/* description */0];
+                }), questHistory[/* encounters */1])));
   return React.createElement("div", {
               className: "rounded overflow-hidden shadow-lg p-2 m-2"
-            }, React.createElement("p", undefined, "Quest complete: " + questHistory[/* questContext */0][/* title */1]));
+            }, React.createElement("p", undefined, "Quest complete: " + questHistory[/* questContext */0][/* title */1]), questDescriptions);
 }
 
 var QuestOutcomeCard = /* module */[/* make */QuestUi$QuestOutcomeCard];
