@@ -31,14 +31,6 @@ module Hero: {
   let make = (~id, ~name, ~skill): t => {id, name, skill};
 };
 
-module QuestBranchDescription: {
-  type t;
-  let makeWithValue: float => t;
-} = {
-  type t = float;
-  let makeWithValue = value => value;
-};
-
 module Reward: {
   type t;
   let gold: int => t;
@@ -49,19 +41,8 @@ module Reward: {
 };
 
 module Quest = {
-  type difficulty = float;
-  type t =
-    | Branch(list(describedQuest), t)
-    | Travel(difficulty, t)
-    | Defend(difficulty, t)
-    | Attack(difficulty, t)
-    | Rest(t)
-    | Loot(list(Reward.t), t)
-    | End
-  and describedQuest =
-    | DescribedQuest(QuestBranchDescription.t, t);
-
   module Encounter = {
+    type difficulty = float;
     module SuccessMap =
       Map.Make({
         type t = float;
@@ -100,10 +81,11 @@ module Quest = {
 
     let branch =
         (
-          ~optionalOutcomes=SuccessMap.empty,
           ~difficulty,
           ~defaultOutcome: branchOutcome,
           ~defaultNext: t,
+          ~optionalOutcomes=SuccessMap.empty,
+          (),
         )
         : t =>
       Branch(
@@ -118,10 +100,11 @@ module Quest = {
       );
     let travel =
         (
-          ~optionalOutcomes=SuccessMap.empty,
           ~difficulty,
           ~defaultOutcome: travelOutcome,
           ~defaultNext: t,
+          ~optionalOutcomes=SuccessMap.empty,
+          (),
         )
         : t =>
       Travel(
@@ -136,10 +119,11 @@ module Quest = {
       );
     let loot =
         (
-          ~optionalOutcomes=SuccessMap.empty,
           ~difficulty,
           ~defaultOutcome: lootOutcome,
           ~defaultNext: t,
+          ~optionalOutcomes=SuccessMap.empty,
+          (),
         )
         : t =>
       Loot(
@@ -154,10 +138,11 @@ module Quest = {
       );
     let defend =
         (
-          ~optionalOutcomes=SuccessMap.empty,
           ~difficulty,
           ~defaultOutcome: defendOutcome,
           ~defaultNext: t,
+          ~optionalOutcomes=SuccessMap.empty,
+          (),
         )
         : t =>
       Defend(
@@ -172,10 +157,11 @@ module Quest = {
       );
     let attack =
         (
-          ~optionalOutcomes=SuccessMap.empty,
           ~difficulty,
           ~defaultOutcome: attackOutcome,
           ~defaultNext: t,
+          ~optionalOutcomes=SuccessMap.empty,
+          (),
         )
         : t =>
       Attack(
@@ -190,10 +176,11 @@ module Quest = {
       );
     let rest =
         (
-          ~optionalOutcomes=SuccessMap.empty,
           ~difficulty,
           ~defaultOutcome: restOutcome,
           ~defaultNext: t,
+          ~optionalOutcomes=SuccessMap.empty,
+          (),
         )
         : t =>
       Rest(
@@ -209,19 +196,37 @@ module Quest = {
     let endQuest = () => End;
   };
 
-  let branch = (~options=[], default) => Branch(options, default);
-  let travel = (difficulty, next) => Travel(difficulty, next);
-  let defend = (difficulty, next) => Defend(difficulty, next);
-  let attack = (difficulty, next) => Attack(difficulty, next);
-  let rest = next => Rest(next);
-  let loot = (rewards, next) => Loot(rewards, next);
-  let endQuest = () => End;
+  type questDescription = {descriptionText: string};
+  type t = {
+    questDescription,
+    firstEncounter: Encounter.t,
+  };
 };
 
-let r = [Reward.gold(5), Reward.gold(10)];
-let q1 = Quest.Loot(r, Quest.End);
-let q2 = Quest.Defend(0.5, Quest.End);
-
+let q1: Quest.Encounter.t =
+  Quest.Encounter.loot(
+    ~difficulty=0.4,
+    ~defaultOutcome=Reward(Reward.gold(10)),
+    ~defaultNext=Quest.Encounter.End,
+    (),
+  );
+let q2Options =
+  Quest.Encounter.(
+    SuccessMap.(
+      empty
+      |> add(0.33, {outcomeDetails: DamageTaken(10.0), nextEncounter: q1})
+      |> add(0.66, {outcomeDetails: DamageTaken(5.0), nextEncounter: q1})
+      |> add(1.0, {outcomeDetails: DamageTaken(0.0), nextEncounter: q1})
+    )
+  );
+let q2: Quest.Encounter.t =
+  Quest.Encounter.defend(
+    ~difficulty=0.6,
+    ~defaultOutcome=DamageTaken(15.0),
+    ~defaultNext=q1,
+    ~optionalOutcomes=q2Options,
+    (),
+  );
 let q =
   Quest.Branch(
     [
