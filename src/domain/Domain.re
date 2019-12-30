@@ -61,6 +61,154 @@ module Quest = {
   and describedQuest =
     | DescribedQuest(QuestBranchDescription.t, t);
 
+  module Encounter = {
+    module SuccessMap =
+      Map.Make({
+        type t = float;
+        let compare = compare;
+      });
+
+    type branchOutcome =
+      | BranchDescription;
+    type travelOutcome =
+      | SupplyCost(int);
+    type lootOutcome =
+      | Reward(Reward.t);
+    type defendOutcome =
+      | DamageTaken(float);
+    type attackOutcome =
+      | DamageDealt(float);
+    type restOutcome =
+      | PotentialHeals(float);
+
+    type t =
+      | Branch(difficulty, outcomes(branchOutcome))
+      | Travel(difficulty, outcomes(travelOutcome))
+      | Loot(difficulty, outcomes(lootOutcome))
+      | Defend(difficulty, outcomes(defendOutcome))
+      | Attack(difficulty, outcomes(attackOutcome))
+      | Rest(difficulty, outcomes(restOutcome))
+      | End
+    and encounterOutcome('a) = {
+      outcomeDetails: 'a,
+      nextEncounter: t,
+    }
+    and outcomes('a) = {
+      defaultOutcome: encounterOutcome('a),
+      optionalOutcomes: SuccessMap.t(encounterOutcome('a)),
+    };
+
+    let branch =
+        (
+          ~optionalOutcomes=SuccessMap.empty,
+          ~difficulty,
+          ~defaultOutcome: branchOutcome,
+          ~defaultNext: t,
+        )
+        : t =>
+      Branch(
+        difficulty,
+        {
+          defaultOutcome: {
+            outcomeDetails: defaultOutcome,
+            nextEncounter: defaultNext,
+          },
+          optionalOutcomes,
+        },
+      );
+    let travel =
+        (
+          ~optionalOutcomes=SuccessMap.empty,
+          ~difficulty,
+          ~defaultOutcome: travelOutcome,
+          ~defaultNext: t,
+        )
+        : t =>
+      Travel(
+        difficulty,
+        {
+          defaultOutcome: {
+            outcomeDetails: defaultOutcome,
+            nextEncounter: defaultNext,
+          },
+          optionalOutcomes,
+        },
+      );
+    let loot =
+        (
+          ~optionalOutcomes=SuccessMap.empty,
+          ~difficulty,
+          ~defaultOutcome: lootOutcome,
+          ~defaultNext: t,
+        )
+        : t =>
+      Loot(
+        difficulty,
+        {
+          defaultOutcome: {
+            outcomeDetails: defaultOutcome,
+            nextEncounter: defaultNext,
+          },
+          optionalOutcomes,
+        },
+      );
+    let defend =
+        (
+          ~optionalOutcomes=SuccessMap.empty,
+          ~difficulty,
+          ~defaultOutcome: defendOutcome,
+          ~defaultNext: t,
+        )
+        : t =>
+      Defend(
+        difficulty,
+        {
+          defaultOutcome: {
+            outcomeDetails: defaultOutcome,
+            nextEncounter: defaultNext,
+          },
+          optionalOutcomes,
+        },
+      );
+    let attack =
+        (
+          ~optionalOutcomes=SuccessMap.empty,
+          ~difficulty,
+          ~defaultOutcome: attackOutcome,
+          ~defaultNext: t,
+        )
+        : t =>
+      Attack(
+        difficulty,
+        {
+          defaultOutcome: {
+            outcomeDetails: defaultOutcome,
+            nextEncounter: defaultNext,
+          },
+          optionalOutcomes,
+        },
+      );
+    let rest =
+        (
+          ~optionalOutcomes=SuccessMap.empty,
+          ~difficulty,
+          ~defaultOutcome: restOutcome,
+          ~defaultNext: t,
+        )
+        : t =>
+      Rest(
+        difficulty,
+        {
+          defaultOutcome: {
+            outcomeDetails: defaultOutcome,
+            nextEncounter: defaultNext,
+          },
+          optionalOutcomes,
+        },
+      );
+    let endQuest = () => End;
+  };
+
   let branch = (~options=[], default) => Branch(options, default);
   let travel = (difficulty, next) => Travel(difficulty, next);
   let defend = (difficulty, next) => Defend(difficulty, next);
