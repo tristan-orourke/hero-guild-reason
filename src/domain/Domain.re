@@ -215,7 +215,6 @@ module Quest = {
   };
 
   type questContext = {
-    id: Util.Id.t,
     title: string,
     location,
     questType,
@@ -223,6 +222,7 @@ module Quest = {
   };
 
   type t = {
+    id: Util.Id.t,
     questContext,
     firstEncounter: Encounter.t,
   };
@@ -459,8 +459,8 @@ module BasicQuestGenerator = {
         )
       );
     {
+      id,
       questContext: {
-        id,
         title: "A new dummy Quest with id = " ++ id,
         location: Forest,
         questType: ClearMonsters,

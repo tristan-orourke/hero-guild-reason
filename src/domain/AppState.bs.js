@@ -29,13 +29,13 @@ function initQuest(param) {
 
 function questReducer(state, action) {
   if (action.tag) {
-    var questContext = action[0];
+    var quest = action[0];
     return /* record */[
             /* pendingQuests */List.filter((function (item) {
-                      return item[/* id */0] !== questContext[/* id */0];
+                      return item[/* id */0] !== quest[/* id */0];
                     }))(state[/* pendingQuests */0]),
             /* completedQuests : :: */[
-              Domain$HeroGuild.SimpleQuestRunner[/* run */2](action[1], questContext),
+              Domain$HeroGuild.SimpleQuestRunner[/* run */6](action[1], quest),
               state[/* completedQuests */1]
             ]
           ];

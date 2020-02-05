@@ -63,3 +63,7 @@ module Random: RandomType =
     let randomFloatStream = (~min: float, ~max: float, g: Gen.t) =>
       generatorStream(randomFloat(~min, ~max), g);
   };
+
+module Strings = {
+  let join = (sep: string) => List.fold_left((a, b) => a ++ sep ++ b, "");
+};

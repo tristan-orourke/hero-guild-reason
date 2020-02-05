@@ -317,7 +317,7 @@ function runRec(party, _pastEncounters, questContext, _encounter) {
 function run(party, quest) {
   return /* record */[
           /* quest */quest,
-          /* encounters */runRec(party, /* [] */0, quest[/* questContext */0], quest[/* firstEncounter */1])
+          /* encounters */runRec(party, /* [] */0, quest[/* questContext */1], quest[/* firstEncounter */2])
         ];
 }
 
@@ -337,8 +337,8 @@ function make$1(seed, id) {
   var floats = Curry._3(ConstRandom[/* randomFloatStream */3], 0.0, 1.0, seed);
   var firstEncounter = travelDefault(Stream.next(floats), /* SupplyCost */[10], defendDefault(Stream.next(floats), /* DamageTaken */[5.0], attackDefault(Stream.next(floats), /* DamageDealt */[10.0], restDefault(Stream.next(floats), /* PotentialHeals */[5.0], lootDefault(Stream.next(floats), /* Reward */[/* Gold */[10]], /* End */0)))));
   return /* record */[
+          /* id */id,
           /* questContext : record */[
-            /* id */id,
             /* title */"A new dummy Quest with id = " + id,
             /* location : Forest */0,
             /* questType : ClearMonsters */0,
