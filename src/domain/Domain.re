@@ -1,3 +1,10 @@
+type location =
+  | Forest
+  | Ruin;
+type questType =
+  | ClearMonsters
+  | Guard;
+
 module Hero: {
   type t;
   type view = {
@@ -31,14 +38,6 @@ module Hero: {
   let make = (~id, ~name, ~skill): t => {id, name, skill};
 };
 
-module QuestBranchDescription: {
-  type t;
-  let makeWithValue: float => t;
-} = {
-  type t = float;
-  let makeWithValue = value => value;
-};
-
 module Reward: {
   type t;
   let gold: int => t;
@@ -49,43 +48,255 @@ module Reward: {
 };
 
 module Quest = {
-  type difficulty = float;
-  type t =
-    | Branch(list(describedQuest), t)
-    | Travel(difficulty, t)
-    | Defend(difficulty, t)
-    | Attack(difficulty, t)
-    | Rest(t)
-    | Loot(list(Reward.t), t)
-    | End
-  and describedQuest =
-    | DescribedQuest(QuestBranchDescription.t, t);
+  module Encounter = {
+    type difficulty = float;
+    module SuccessMap =
+      Map.Make({
+        type t = float;
+        let compare = compare;
+      });
 
-  let branch = (~options=[], default) => Branch(options, default);
-  let travel = (difficulty, next) => Travel(difficulty, next);
-  let defend = (difficulty, next) => Defend(difficulty, next);
-  let attack = (difficulty, next) => Attack(difficulty, next);
-  let rest = next => Rest(next);
-  let loot = (rewards, next) => Loot(rewards, next);
-  let endQuest = () => End;
+    type branchOutcome =
+      | BranchDescription;
+    type travelOutcome =
+      | SupplyCost(int);
+    type lootOutcome =
+      | Reward(Reward.t);
+    type defendOutcome =
+      | DamageTaken(float);
+    type attackOutcome =
+      | DamageDealt(float);
+    type restOutcome =
+      | PotentialHeals(float);
+
+    type t =
+      | Branch(difficulty, outcomes(branchOutcome))
+      | Travel(difficulty, outcomes(travelOutcome))
+      | Loot(difficulty, outcomes(lootOutcome))
+      | Defend(difficulty, outcomes(defendOutcome))
+      | Attack(difficulty, outcomes(attackOutcome))
+      | Rest(difficulty, outcomes(restOutcome))
+      | End
+    and encounterOutcome('a) = {
+      outcomeDetails: 'a,
+      nextEncounter: t,
+    }
+    and outcomes('a) = {
+      defaultOutcome: encounterOutcome('a),
+      optionalOutcomes: SuccessMap.t(encounterOutcome('a)),
+    };
+
+    let branch =
+        (
+          ~difficulty,
+          ~defaultOutcome: branchOutcome,
+          ~defaultNext: t,
+          ~optionalOutcomes=SuccessMap.empty,
+          (),
+        )
+        : t =>
+      Branch(
+        difficulty,
+        {
+          defaultOutcome: {
+            outcomeDetails: defaultOutcome,
+            nextEncounter: defaultNext,
+          },
+          optionalOutcomes,
+        },
+      );
+    let travel =
+        (
+          ~difficulty,
+          ~defaultOutcome: travelOutcome,
+          ~defaultNext: t,
+          ~optionalOutcomes=SuccessMap.empty,
+          (),
+        )
+        : t =>
+      Travel(
+        difficulty,
+        {
+          defaultOutcome: {
+            outcomeDetails: defaultOutcome,
+            nextEncounter: defaultNext,
+          },
+          optionalOutcomes,
+        },
+      );
+    let loot =
+        (
+          ~difficulty,
+          ~defaultOutcome: lootOutcome,
+          ~defaultNext: t,
+          ~optionalOutcomes=SuccessMap.empty,
+          (),
+        )
+        : t =>
+      Loot(
+        difficulty,
+        {
+          defaultOutcome: {
+            outcomeDetails: defaultOutcome,
+            nextEncounter: defaultNext,
+          },
+          optionalOutcomes,
+        },
+      );
+    let defend =
+        (
+          ~difficulty,
+          ~defaultOutcome: defendOutcome,
+          ~defaultNext: t,
+          ~optionalOutcomes=SuccessMap.empty,
+          (),
+        )
+        : t =>
+      Defend(
+        difficulty,
+        {
+          defaultOutcome: {
+            outcomeDetails: defaultOutcome,
+            nextEncounter: defaultNext,
+          },
+          optionalOutcomes,
+        },
+      );
+    let attack =
+        (
+          ~difficulty,
+          ~defaultOutcome: attackOutcome,
+          ~defaultNext: t,
+          ~optionalOutcomes=SuccessMap.empty,
+          (),
+        )
+        : t =>
+      Attack(
+        difficulty,
+        {
+          defaultOutcome: {
+            outcomeDetails: defaultOutcome,
+            nextEncounter: defaultNext,
+          },
+          optionalOutcomes,
+        },
+      );
+    let rest =
+        (
+          ~difficulty,
+          ~defaultOutcome: restOutcome,
+          ~defaultNext: t,
+          ~optionalOutcomes=SuccessMap.empty,
+          (),
+        )
+        : t =>
+      Rest(
+        difficulty,
+        {
+          defaultOutcome: {
+            outcomeDetails: defaultOutcome,
+            nextEncounter: defaultNext,
+          },
+          optionalOutcomes,
+        },
+      );
+    let endQuest = () => End;
+
+    let travelDefault = (~difficulty, ~defaultOutcome, defaultNext: t): t =>
+      travel(~difficulty, ~defaultOutcome, ~defaultNext, ());
+    let lootDefault = (~difficulty, ~defaultOutcome, defaultNext: t): t =>
+      loot(~difficulty, ~defaultOutcome, ~defaultNext, ());
+    let defendDefault = (~difficulty, ~defaultOutcome, defaultNext: t): t =>
+      defend(~difficulty, ~defaultOutcome, ~defaultNext, ());
+    let attackDefault = (~difficulty, ~defaultOutcome, defaultNext: t): t =>
+      attack(~difficulty, ~defaultOutcome, ~defaultNext, ());
+    let restDefault = (~difficulty, ~defaultOutcome, defaultNext: t): t =>
+      rest(~difficulty, ~defaultOutcome, ~defaultNext, ());
+  };
+
+  type questContext = {
+    title: string,
+    location,
+    questType,
+    seed: Util.ConstGen.t,
+  };
+
+  type t = {
+    id: Util.Id.t,
+    questContext,
+    firstEncounter: Encounter.t,
+  };
 };
 
-let r = [Reward.gold(5), Reward.gold(10)];
-let q1 = Quest.Loot(r, Quest.End);
-let q2 = Quest.Defend(0.5, Quest.End);
+/** TESTING HOW TO CONSTRUCT ENCOUNTERS */
+module TestEncounters = {
+  let q1: Quest.Encounter.t =
+    Quest.Encounter.loot(
+      ~difficulty=0.4,
+      ~defaultOutcome=Reward(Reward.gold(10)),
+      ~defaultNext=Quest.Encounter.End,
+      (),
+    );
+  let q2Options =
+    Quest.Encounter.(
+      SuccessMap.(
+        empty
+        |> add(
+             0.33,
+             {outcomeDetails: DamageTaken(10.0), nextEncounter: q1},
+           )
+        |> add(0.66, {outcomeDetails: DamageTaken(5.0), nextEncounter: q1})
+        |> add(1.0, {outcomeDetails: DamageTaken(0.0), nextEncounter: q1})
+      )
+    );
+  let q2: Quest.Encounter.t =
+    Quest.Encounter.defend(
+      ~difficulty=0.6,
+      ~defaultOutcome=DamageTaken(15.0),
+      ~defaultNext=q1,
+      ~optionalOutcomes=q2Options,
+      (),
+    );
+  let q =
+    Quest.Encounter.branch(
+      ~difficulty=0.0,
+      ~defaultOutcome=BranchDescription,
+      ~defaultNext=q2,
+      ~optionalOutcomes=
+        Quest.Encounter.(
+          SuccessMap.(
+            empty
+            |> add(
+                 0.1,
+                 {outcomeDetails: BranchDescription, nextEncounter: q1},
+               )
+          )
+        ),
+    );
 
-let q =
-  Quest.Branch(
-    [
-      Quest.DescribedQuest(QuestBranchDescription.makeWithValue(2.0), q1),
-      Quest.DescribedQuest(QuestBranchDescription.makeWithValue(0.5), q2),
-    ],
-    q2,
-  );
+  let r = Quest.Encounter.Reward(Reward.gold(12));
+  let pipedQuest =
+    Quest.Encounter.(
+      endQuest() |> lootDefault(~difficulty=0.4, ~defaultOutcome=r)
+    );
+  let bracketQuest =
+    Quest.Encounter.(
+      defendDefault(
+        ~difficulty=0.5,
+        ~defaultOutcome=DamageTaken(5.0),
+        lootDefault(~difficulty=0.4, ~defaultOutcome=r, endQuest()),
+      )
+    );
+  let composedQuest =
+    Quest.Encounter.(
+      defendDefault(~difficulty=0.5, ~defaultOutcome=DamageTaken(5.0)) @@
+      lootDefault(~difficulty=0.4, ~defaultOutcome=r) @@
+      endQuest()
+    );
+  ();
+};
 
-let pipedQuest = Quest.(endQuest() |> loot(r));
-let bracketQuest = Quest.(defend(0.5, loot(r, endQuest())));
-let composedQuest = Quest.(defend(0.5) @@ loot(r) @@ endQuest());
+/** END OF ENCOUNTER TESTING */
 
 type party = {
   scout: Hero.t,
@@ -94,110 +305,168 @@ type party = {
   support: Hero.t,
 };
 
-type location =
-  | Forest
-  | Ruin;
-type questType =
-  | ClearMonsters
-  | Guard;
-
-type questContext = {
-  id: Util.Id.t,
-  title: string,
-  location,
-  questType,
-  seed: Util.ConstGen.t,
-  quest: Quest.t,
-};
-
 type questAction =
-  | GainGold(int);
+  | GainGold(int)
+  | TakeDamage(Util.Id.t, float);
 
 type encounterResult = {
-  description: string,
+  descriptions: list(string),
   questActions: list(questAction),
 };
 
 type questHistory = {
-  questContext,
+  quest: Quest.t,
   encounters: list(encounterResult),
 };
 
 module SimpleQuestRunner = {
-  let basicEncounter = description => {description, questActions: []};
+  let basicEncounter = (description: string): encounterResult => {
+    descriptions: [description],
+    questActions: [],
+  };
+
+  // TODO: Add logic for determining success
+  let determineSuccess =
+      (~party: party, encounter: Quest.Encounter.t)
+      : (float, list(string), list(questAction)) => (
+    0.5,
+    [],
+    [],
+  );
+
+  // TODO: Add logic for considering optional outcomes
+  let pickBranchOutcome =
+      (
+        ~party: party,
+        ~success: float,
+        ~outcomes: Quest.Encounter.outcomes(Quest.Encounter.branchOutcome),
+      ) =>
+    outcomes.defaultOutcome;
+
+  // TODO: Add logic for branch outcome
+  let resolveBranchOutcome =
+      (~party: party, outcome: Quest.Encounter.branchOutcome)
+      : (list(string), list(questAction)) => (
+    [],
+    [],
+  );
+
+  let runEncounter =
+      (
+        ~party,
+        ~pastEncounters: list(encounterResult),
+        ~questContext: Quest.questContext,
+        encounter: Quest.Encounter.t,
+      )
+      : (encounterResult, option(Quest.Encounter.t)) => {
+    switch (encounter) {
+    | End => ({descriptions: [], questActions: []}, None)
+    | Branch(difficulty, outcomes) =>
+      let (success, challengeDescriptions, challengeActions) =
+        determineSuccess(~party, encounter);
+      let outcome = pickBranchOutcome(~party, ~success, ~outcomes);
+      let (outcomeDescriptions, outcomeActions) =
+        resolveBranchOutcome(~party, outcome.outcomeDetails);
+      (
+        {
+          descriptions:
+            List.concat([challengeDescriptions, outcomeDescriptions]),
+          questActions: List.concat([challengeActions, outcomeActions]),
+        },
+        Some(outcome.nextEncounter),
+      );
+    | Travel(difficulty, outcomes) => (
+        {descriptions: [], questActions: []},
+        Some(outcomes.defaultOutcome.nextEncounter),
+      )
+    | Loot(difficulty, outcomes) => (
+        {descriptions: [], questActions: []},
+        Some(outcomes.defaultOutcome.nextEncounter),
+      )
+    | Defend(difficulty, outcomes) => (
+        {descriptions: [], questActions: []},
+        Some(outcomes.defaultOutcome.nextEncounter),
+      )
+    | Attack(difficulty, outcomes) => (
+        {descriptions: [], questActions: []},
+        Some(outcomes.defaultOutcome.nextEncounter),
+      )
+    | Rest(difficulty, outcomes) => (
+        {descriptions: [], questActions: []},
+        Some(outcomes.defaultOutcome.nextEncounter),
+      )
+    };
+  };
 
   let rec runRec =
           (
             ~party: party,
             ~pastEncounters: list(encounterResult),
-            ~quest: Quest.t,
+            ~questContext: Quest.questContext,
+            encounter: Quest.Encounter.t,
           )
           : list(encounterResult) => {
-    let runPartial = runRec(~party);
-    let handleEncounter = (description, next) =>
-      runPartial(
-        ~pastEncounters=
-          List.append(pastEncounters, [basicEncounter(description)]),
-        ~quest=next,
-      );
-    switch (quest) {
-    | Branch(_, next) =>
-      handleEncounter(
-        "And then they branched, but chose the default route.",
-        next,
-      )
-    | Travel(difficulty, next) =>
-      handleEncounter(
-        "And then they travelled at a difficulty of "
-        ++ Js.Float.toString(difficulty),
-        next,
-      )
-    | Defend(difficulty, next) =>
-      handleEncounter(
-        "And then they defended at a difficulty of "
-        ++ Js.Float.toString(difficulty),
-        next,
-      )
-    | Attack(difficulty, next) =>
-      handleEncounter(
-        "And then they attacked at a difficulty of "
-        ++ Js.Float.toString(difficulty),
-        next,
-      )
-    | Rest(next) => handleEncounter("And then they rested.", next)
-    | Loot(_, next) => handleEncounter("And then they looted.", next)
-    | End => pastEncounters
+    let (result, nextEncounter) =
+      runEncounter(~party, ~pastEncounters, ~questContext, encounter);
+    let encounterList = List.append(pastEncounters, [result]);
+    switch (nextEncounter) {
+    | None => encounterList
+    | Some(x) =>
+      runRec(~party, ~pastEncounters=encounterList, ~questContext, x)
     };
   };
 
-  let run = (~party, ~questContext): questHistory => {
-    questContext,
-    encounters: runRec(~party, ~pastEncounters=[], ~quest=questContext.quest),
+  let run = (~party, ~quest: Quest.t): questHistory => {
+    quest,
+    encounters:
+      runRec(
+        ~party,
+        ~pastEncounters=[],
+        ~questContext=quest.questContext,
+        quest.firstEncounter,
+      ),
   };
 };
 
 module BasicQuestGenerator = {
   module ConstRandom = Util.Random(Util.ConstGen);
-  let make = (~seed: Util.ConstGen.t, ~id: Util.Id.t): questContext => {
+  let make = (~seed: Util.ConstGen.t, ~id: Util.Id.t): Quest.t => {
     let floats = ConstRandom.randomFloatStream(~min=0.0, ~max=1.0, seed);
-    let quest =
-      Quest.(
+    let firstEncounter =
+      Quest.Encounter.(
         Stream.(
-          travel(next(floats)) @@
-          defend(next(floats)) @@
-          attack(next(floats)) @@
-          rest @@
-          loot([]) @@
+          travelDefault(
+            ~difficulty=next(floats),
+            ~defaultOutcome=SupplyCost(10),
+          ) @@
+          defendDefault(
+            ~difficulty=next(floats),
+            ~defaultOutcome=DamageTaken(5.0),
+          ) @@
+          attackDefault(
+            ~difficulty=next(floats),
+            ~defaultOutcome=DamageDealt(10.0),
+          ) @@
+          restDefault(
+            ~difficulty=next(floats),
+            ~defaultOutcome=PotentialHeals(5.0),
+          ) @@
+          lootDefault(
+            ~difficulty=next(floats),
+            ~defaultOutcome=Reward(Reward.gold(10)),
+          ) @@
           endQuest()
         )
       );
     {
       id,
-      title: "A new dummy Quest with id = " ++ id,
-      location: Forest,
-      questType: ClearMonsters,
-      seed,
-      quest,
+      questContext: {
+        title: "A new dummy Quest with id = " ++ id,
+        location: Forest,
+        questType: ClearMonsters,
+        seed,
+      },
+      firstEncounter,
     };
   };
 };

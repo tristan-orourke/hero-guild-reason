@@ -16,13 +16,13 @@ module HeroState = {
 
 module QuestState = {
   type questState = {
-    pendingQuests: list(Domain.questContext),
+    pendingQuests: list(Domain.Quest.t),
     completedQuests: list(Domain.questHistory),
   };
 
   type questAction =
-    | AddQuest(Domain.questContext)
-    | ResolveQuest(Domain.questContext, Domain.party);
+    | AddQuest(Domain.Quest.t)
+    | ResolveQuest(Domain.Quest.t, Domain.party);
 
   let initQuest = (): questState => {pendingQuests: [], completedQuests: []};
 
@@ -32,14 +32,14 @@ module QuestState = {
         ...state,
         pendingQuests: [quest, ...state.pendingQuests],
       }
-    | ResolveQuest(questContext, party) => {
+    | ResolveQuest(quest, party) => {
         pendingQuests:
           List.filter(
-            (item: Domain.questContext) => item.id !== questContext.id,
+            (item: Domain.Quest.t) => item.id !== quest.id,
             state.pendingQuests,
           ),
         completedQuests: [
-          Domain.SimpleQuestRunner.run(~party, ~questContext),
+          Domain.SimpleQuestRunner.run(~party, ~quest),
           ...state.completedQuests,
         ],
       }

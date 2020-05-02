@@ -2,7 +2,7 @@ open Domain;
 
 module QuestInfoCard = {
   [@react.component]
-  let make = (~context: Domain.questContext) => {
+  let make = (~context: Domain.Quest.questContext) => {
     let locationString = (location: location): string =>
       switch (location) {
       | Forest => "Forest"
@@ -33,10 +33,9 @@ module QuestResolver = {
   [@react.component]
   let make =
       (
-        ~quest: Domain.questContext,
+        ~quest: Domain.Quest.t,
         ~heroes: list(Hero.t),
-        ~handleResolveQuest:
-           (~quest: Domain.questContext, ~party: party) => unit,
+        ~handleResolveQuest: (~quest: Domain.Quest.t, ~party: party) => unit,
       ) => {
     let (showParty, setShowParty) = React.useState(() => false);
 
@@ -58,7 +57,10 @@ module QuestOutcomeCard = {
   [@react.component]
   let make = (~questHistory: Domain.questHistory) => {
     let questDescriptions =
-      List.map(encounter => encounter.description, questHistory.encounters)
+      List.map(
+        encounter => Util.Strings.join(" ", encounter.descriptions),
+        questHistory.encounters,
+      )
       |> List.mapi((index: int, description: string) =>
            <p key={string_of_int(index)}> {React.string(description)} </p>
          )
@@ -67,7 +69,9 @@ module QuestOutcomeCard = {
 
     <div className="rounded overflow-hidden shadow-lg p-2 m-2">
       <p>
-        {React.string("Quest complete: " ++ questHistory.questContext.title)}
+        {React.string(
+           "Quest complete: " ++ questHistory.quest.questContext.title,
+         )}
       </p>
       questDescriptions
     </div>;
@@ -79,12 +83,11 @@ module SetupQuest = {
   let make =
       (
         ~quest: Quest.t,
-        ~questContext: Domain.questContext,
         ~heroes: list(Hero.t),
         ~startQuest: (~quest: Quest.t, ~party: Domain.party) => unit,
       ) => {
     <div className="block">
-      <QuestInfoCard context=questContext />
+      <QuestInfoCard context={quest.questContext} />
       <PartyForm heroes submitParty={party => startQuest(~quest, ~party)} />
     </div>;
   };
@@ -93,14 +96,14 @@ module SetupQuest = {
 [@react.component]
 let make =
     (
-      ~pendingQuests: list(Domain.questContext),
+      ~pendingQuests: list(Domain.Quest.t),
       ~completedQuests: list(Domain.questHistory),
       ~heroes: list(Hero.t),
-      ~handleAddQuest: Domain.questContext => unit,
+      ~handleAddQuest: Domain.Quest.t => unit,
       ~handleResolveQuest:
-         (~quest: Domain.questContext, ~party: Domain.party) => unit,
+         (~quest: Domain.Quest.t, ~party: Domain.party) => unit,
     ) => {
-  let generateQuest = (): Domain.questContext =>
+  let generateQuest = (): Domain.Quest.t =>
     Domain.BasicQuestGenerator.make(
       ~seed=Util.ConstGen.make(1),
       ~id=Util.Id.newId("quest"),
@@ -108,10 +111,10 @@ let make =
 
   let questCards =
     List.map(
-      (questContext: Domain.questContext) =>
-        <div key={questContext.id}>
-          <QuestInfoCard context=questContext />
-          <QuestResolver quest=questContext heroes handleResolveQuest />
+      (quest: Domain.Quest.t) =>
+        <div key={quest.id}>
+          <QuestInfoCard context={quest.questContext} />
+          <QuestResolver quest heroes handleResolveQuest />
         </div>,
       pendingQuests,
     )
@@ -121,7 +124,7 @@ let make =
   let questOutcomeCards =
     List.map(
       questHistory =>
-        <QuestOutcomeCard questHistory key={questHistory.questContext.id} />,
+        <QuestOutcomeCard questHistory key={questHistory.quest.id} />,
       completedQuests,
     )
     ->Array.of_list
