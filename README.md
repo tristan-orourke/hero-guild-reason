@@ -1,6 +1,6 @@
 # hero-guild-reason
 
-View current build at https://tristan-orourke.github.io/hero-guild/.
+View current build at https://tristan-orourke.github.io/hero-guild-reason/.
 
 ## Run Project
 
